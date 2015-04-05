@@ -11,7 +11,7 @@
 	"minimum-stability": "dev",
 	"require": {
 		"php": ">=5.4",
-		"redbeanphp": "master@dev",
+		"redbeanphp": "@dev",
 		"pimple/pimple": "3.0.*@dev",
 		"symfony/http-foundation": "~2.3",
 		"smarty/smarty": "3.1.*"
@@ -21,7 +21,7 @@
 			"Mirage\\": "framework"
 		},
 		"files": [
-			"vendor/redbeanphp/rb.php"
+			"/vendor/redbeanphp/rb.php"
 		]
 	},
 	"repositories": [
