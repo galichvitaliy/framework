@@ -1,0 +1,19 @@
+{
+	"name": "mirage/framework",
+	"description": "Mirage Framework",
+	"authors": [
+		{
+			"name": "Vitaliy Galych",
+			"email": "galich.vitaliy@gmail.com"
+		}
+	],
+	"minimum-stability": "dev",
+	"require": {
+		"php": ">=5.4.0"
+	},
+	"autoload": {
+		"psr-0": {
+			"Mirage": "framework/"
+		}
+	}
+}
