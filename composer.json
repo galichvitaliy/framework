@@ -1,6 +1,7 @@
 {
 	"name": "mirage/framework",
 	"description": "Mirage Framework",
+	"version": "0.1",
 	"authors": [
 		{
 			"name": "Vitaliy Galych",
@@ -9,11 +10,31 @@
 	],
 	"minimum-stability": "dev",
 	"require": {
-		"php": ">=5.4.0"
+		"php": ">=5.4",
+		"redbeanphp": "@dev",
+		"pimple/pimple": "3.0.*@dev",
+		"symfony/http-foundation": "~2.3",
+		"smarty/smarty": "3.1.*"
 	},
 	"autoload": {
-		"psr-0": {
-			"Mirage": "framework/"
+		"psr-4": {
+			"Mirage\\": "framework"
+		},
+		"files": [
+			"vendor/redbeanphp/rb.php"
+		]
+	},
+	"repositories": [
+		{
+			"type": "package",
+			"package": {
+				"name": "redbeanphp",
+				"version": "master",
+				"dist": {
+					"url": "http://www.redbeanphp.com/downloadredbean.php",
+					"type": "tar"
+				}
+			}
 		}
-	}
+	]
 }
