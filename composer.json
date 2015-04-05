@@ -8,10 +8,9 @@
 			"email": "galich.vitaliy@gmail.com"
 		}
 	],
-	"minimum-stability": "dev",
 	"require": {
 		"php": ">=5.4",
-		"redbeanphp": "@dev",
+		"redbeanphp": "master@dev",
 		"pimple/pimple": "3.0.*@dev",
 		"symfony/http-foundation": "~2.3",
 		"smarty/smarty": "3.1.*"
