@@ -8,6 +8,7 @@
 			"email": "galich.vitaliy@gmail.com"
 		}
 	],
+	"minimum-stability": "dev",
 	"require": {
 		"php": ">=5.4",
 		"redbeanphp": "master@dev",
