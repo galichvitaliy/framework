@@ -14,6 +14,7 @@ class HTTP {
 	static $controller;
 	static $default_action = "index";
 	static $action;
+	static $uri;
 	static $cms = false;
 	static $cms_action;
 	static $page = 1;
@@ -22,9 +23,9 @@ class HTTP {
 
 	static public function setRouting() {
 		$input_url = current(explode("?", strtolower($_SERVER['REQUEST_URI']))); //clean string from ?params
-		$input_url = trim($input_url, '/');
+		self::$uri = trim($input_url, '/');
 
-		$links = explode("/", $input_url);
+		$links = explode("/", self::$uri);
 		self::$controller = isset($links[0]) ? $links[0] : self::$default_controller;
 		array_shift($links);//removing controller name
 		self::$action = isset($links[0]) ? $links[0] : self::$default_action;
@@ -116,4 +117,4 @@ class HTTP {
 		return $ip;
 	}
 
-} 
+}
