@@ -263,7 +263,7 @@ class Router {
         // If no route was handled, trigger the 404 (if any)
         if ($numHandled == 0) {
 	        if(Config::get('web.static')) {
-		        call_user_func_array([new Page(), 'show'], [ltrim($this->uri, "/")]);
+		        call_user_func_array([new \Page(), 'show'], [ltrim($this->uri, "/")]);
 	        } elseif ($this->notFound && is_callable($this->notFound)) {
 		        //call_user_func($this->notFound);
 		        call_user_func([new Page(), 'error']);
