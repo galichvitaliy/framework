@@ -11,7 +11,7 @@ namespace Mirage;
 
 class Odmin extends Controller {
 
-	private $ext, $entity, $link, $action, $cms_action, $controller, $model;
+	protected $ext, $entity, $link, $action, $cms_action, $controller, $model;
 
 	function __construct() {
 
