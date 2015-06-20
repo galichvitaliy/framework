@@ -105,8 +105,8 @@ class Helper {
 
 		$pages	= ceil($num_rows/$klvo)+1;
 
-		$url = $_SERVER['REQUEST_URI'];
-		$url = preg_replace('/page(.*?)$/Uis', "", $url);
+		$url_params = explode("?", $_SERVER['REQUEST_URI']);
+		$url = preg_replace('/page-(.*?)$/Uis', "", $url_params[0]);
 		if( strpos($url, '/', strlen($url)-1) ) {
 			$url = substr($url, 0, -1);
 		}
@@ -127,6 +127,7 @@ class Helper {
 
 		if($pages > 2) {
 			$tpl->assign('page_url', $url);
+			$tpl->assign('page_url_get', !empty($url_params[1]) ? "?" . $url_params[1] : "");
 			$tpl->assign('start_page', $start_page);
 			$tpl->assign('end_page', $end_page);
 			$tpl->assign('page', $page);
