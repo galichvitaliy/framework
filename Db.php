@@ -8,7 +8,6 @@
 
 namespace Mirage;
 
-
 class Db extends \RedBeanPHP\Fascade {
 
 }
