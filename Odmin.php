@@ -125,4 +125,40 @@ class Odmin extends Controller {
 		$this->link = $link;
 	}
 
+	//TODO: should be replaced with HTTP methods
+	function getVal($name, $default = false)
+	{
+		if (isset($_POST[$name]) && $_POST[$name]) {
+			return $_POST[$name];
+		} elseif (isset($_GET[$name]) && $_GET[$name]) {
+			return $_GET[$name];
+		} elseif (isset($_SESSION[$name]) && $_SESSION[$name]) {
+			return $_SESSION[$name];
+		} elseif (isset($this->link[$name]) && $this->link[$name]) {
+			return $this->link[$name];
+		} else {
+			return $default;
+		}
+	}
+
+	//TODO: should be replaced with HTTP methods
+	function getAllValsDecoded()
+	{
+		if ($_POST) {
+			$vals = $_POST;
+		} elseif ($_GET) {
+			$vals = $_GET;
+		} elseif (isset($this->link)) {
+			$vals = $this->link;
+		} else {
+			$vals = false;
+		}
+		if ($vals) {
+			foreach ($vals as $key => $value) {
+				$vals[$key] = urldecode($value);
+			}
+		}
+		return $vals;
+	}
+
 }
