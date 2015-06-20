@@ -11,7 +11,7 @@ namespace Mirage;
 class Page extends Controller {
 
 	public function show($id) {
-		$page = Db::findOne('pages', ' _key = ? AND is_active=1 ', [$id]);
+		$page = DB::findOne('pages', ' _key = ? AND is_active=1 ', [$id]);
 		$file = $page ? str_replace("/", '-', $page['_key']) : "";
 		if($page && file_exists(App::get('root_dir')."/public/uploads/custom_page/".$file.'.tpl')) {
 

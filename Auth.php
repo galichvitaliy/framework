@@ -58,7 +58,7 @@ class Auth {
 
 		$ident = isset($param['ident']) ? $param['ident'] : 'email';
 
-		$user = Db::findOne('users', " $ident = ? ", [$param[$ident],]);
+		$user = DB::findOne('users', " $ident = ? ", [$param[$ident],]);
 
 		if(password_verify($param['password'], $user->password)) {
 			if($user->group > 0) {
@@ -96,7 +96,7 @@ class Auth {
 	 */
 	static function loginUsingId($id) {
 		$session = App::get('session');
-		$user = Db::load('users', $id);
+		$user = DB::load('users', $id);
 		if($user->group > 0) {
 			$user['rights'] = self::loadRights((int)$user->group);
 		}
@@ -145,7 +145,7 @@ class Auth {
 	 *
 	 */
 	static private function loadRights($group_id = false) {
-		$rights = Db::getCol('SELECT rule FROM users_rules WHERE users_groups_id = ?', [$group_id]);
+		$rights = DB::getCol('SELECT rule FROM users_rules WHERE users_groups_id = ?', [$group_id]);
 		return $rights;
 	}
 

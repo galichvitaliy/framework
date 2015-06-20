@@ -8,6 +8,7 @@
 
 namespace Mirage;
 
-class Db extends \RedBeanPHP\Fascade {
+class DB extends \RedBeanPHP\Facade
+{
 
 }

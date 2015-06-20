@@ -79,7 +79,7 @@ class Helper {
 	static public function uniqHash($table, $field="hash") {
 
 		$hash = self::base_encode(mt_rand(10000000, 99999999));
-		$exist = Db::getCell("SELECT 1 FROM $table WHERE $field=:field LIMIT 1", [':field' => $hash]);
+		$exist = DB::getCell("SELECT 1 FROM $table WHERE $field=:field LIMIT 1", [':field' => $hash]);
 
 		if($exist) {
 			self::uniqHash($table, $field);
@@ -99,7 +99,7 @@ class Helper {
 		$sql	= preg_replace('/LIMIT(.*?)$/Uis', "", $sql);
 		$sql	.= " LIMIT $layout, $klvo;";
 
-		$rows = Db::getCol($sql_num, $bind_params);
+		$rows = DB::getCol($sql_num, $bind_params);
 		$num_rows = sizeof($rows);
 		unset($rows);
 
