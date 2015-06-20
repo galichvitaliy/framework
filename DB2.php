@@ -10,5 +10,4 @@ namespace Mirage;
 
 class DB extends \RedBeanPHP\Facade
 {
-
 }
