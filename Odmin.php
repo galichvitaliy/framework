@@ -33,7 +33,6 @@ class Odmin extends Controller {
 
 		//$this->tpl->display('index.tpl');
 
-
 		if(!Auth::check() && $this->action != "login") {
 			$this->redirect_to("/{$this->controller}/login");
 		}
