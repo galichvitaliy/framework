@@ -300,6 +300,9 @@ class Odmin extends Controller {
                 if(!empty($this->entity['add']['fields'][$key]['type']) && $this->entity['add']['fields'][$key]['type']=="editor") {
                     $data[$key] = htmlspecialchars($value);
                 }
+                if(!empty($this->entity['add']['fields'][$key]['multi'])) {
+                    $data[$key] = unserialize($value);
+                }
             }
             $data['id'] = $id;
             $this->tpl->assign('item', $data);
