@@ -440,11 +440,11 @@ class Odmin extends Controller {
         Helper::checkDir($tmp_path);
 
         if(move_uploaded_file($_FILES['img']['tmp_name'], $tmp_path.$_FILES['img']['name'])) {
-            $filename = Helper::recursiveFilename($path, strtolower(pathinfo($tmp_path.$_FILES['img']['name'], PATHINFO_FILENAME)), "jpg");
+            $filename = Helper::recursiveFilename($path, strtolower(pathinfo($tmp_path.$_FILES['img']['name'], PATHINFO_FILENAME)), !empty($ent['ext']) ? $ent['ext'] : "jpg");
 
             if(!empty($ent['sizes']))
             {
-                $resize = new \Mirage\Image($tmp_path.$_FILES['img']['name'], 'jpg');
+                $resize = new \Mirage\Image($tmp_path.$_FILES['img']['name'], !empty($ent['ext']) ? $ent['ext'] : "jpg");
                 $resize->outputQuality = 90;
 
                 foreach ($ent['sizes'] as $size) {
