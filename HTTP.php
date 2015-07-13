@@ -59,6 +59,10 @@ class HTTP {
 		return isset($_COOKIE[$id]) ? $_COOKIE[$id] : false;
 	}
 
+	static public function request($id) {
+		return isset($_REQUEST [$id]) ? $_REQUEST [$id] : false;
+	}
+
 	static public function param($id) {
 		return isset(self::$link[$id]) ? self::$link[$id] : false;
 	}
