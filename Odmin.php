@@ -126,8 +126,7 @@ class Odmin extends Controller {
 	}
 
 	//TODO: should be replaced with HTTP methods
-	function getVal($name, $default = false)
-	{
+	function getVal($name, $default = false) {
 		if (isset($_POST[$name]) && $_POST[$name]) {
 			return $_POST[$name];
 		} elseif (isset($_GET[$name]) && $_GET[$name]) {
@@ -142,8 +141,7 @@ class Odmin extends Controller {
 	}
 
 	//TODO: should be replaced with HTTP methods
-	function getAllValsDecoded()
-	{
+	function getAllValsDecoded() {
 		if ($_POST) {
 			$vals = $_POST;
 		} elseif ($_GET) {
@@ -358,8 +356,6 @@ class Odmin extends Controller {
 
             }
 
-
-
             $this->tpl->assign('title', $this->entity[$act]['title']);
             $this->tpl->assign('entity', $this->entity[$act]);
             $this->tpl->assign('fields', $fields);
@@ -437,7 +433,7 @@ class Odmin extends Controller {
 
         $ent = $db_fields[$key];
 
-        $path = App::get('public_dir')."/".$ent['path'].HTTP::post('hash')."/";
+	    $path = App::get('public_dir')."/".$ent['path'].(HTTP::post('hash') ? HTTP::post('hash')."/" : "");
         Helper::checkDir($path);
         $tmp_path = App::get('runtime_dir')."/tmp/";
         Helper::checkDir($tmp_path);
@@ -445,8 +441,7 @@ class Odmin extends Controller {
         if(move_uploaded_file($_FILES['img']['tmp_name'], $tmp_path.$_FILES['img']['name'])) {
             $filename = Helper::recursiveFilename($path, strtolower(pathinfo($tmp_path.$_FILES['img']['name'], PATHINFO_FILENAME)), !empty($ent['ext']) ? $ent['ext'] : "jpg");
 
-            if(!empty($ent['sizes']))
-            {
+            if(!empty($ent['sizes'])) {
                 $resize = new \Mirage\Image($tmp_path.$_FILES['img']['name'], !empty($ent['ext']) ? $ent['ext'] : "jpg");
                 $resize->outputQuality = 90;
 
@@ -458,31 +453,25 @@ class Odmin extends Controller {
                     $prefix = !empty($size['prefix']) ? $size['prefix']."_" : '';
                     $wm = (!empty($size['watermark']) && $size['watermark']) ? $size['watermark'] : false;
 
-                    if($wm){
+                    if($wm) {
                         $resize->waterMark($tmp_path.$_FILES['img']['name'], App::get('public_dir').$wm);
                     }
 
                     if($crop) {
                         $resize->centerResize($path.$prefix.$filename, $width, $height);
-                    }
-                    elseif($fill) {
+                    } elseif($fill) {
                         $resize->fillResize($path.$prefix.$filename, $width, $height);
-                    }
-                    else {
+                    } else {
                         if($width && !$height){
                             $resize->widthRestriction($path.$prefix.$filename, $width);
-                        }
-                        elseif($height && !$width){
+                        } elseif($height && !$width){
                             $resize->heightRestriction($path.$prefix.$filename, $height);
-                        }
-                        else{
+                        } else {
                             $resize->limitBoxResize($path.$prefix.$filename, $width, $height);
                         }
                     }
                 }
-            }
-            else
-            {
+            } else {
                 copy($tmp_path.$_FILES['img']['name'], $path.$filename);
             }
 
@@ -490,14 +479,11 @@ class Odmin extends Controller {
 
             echo json_encode(array(
                 'name'	    => $filename,
-                'path'	    => explode('/public',$path)[1],
+	            'path'	    => "/".$ent['path'].(HTTP::post('hash') ? HTTP::post('hash')."/" : ""),
                 'th_name'	=> is_file($path."th_".$filename) ? "th_".$filename : $filename,
             ));
-
         }
-
     }
-
 
     function imgLoad() {
 
@@ -520,7 +506,6 @@ class Odmin extends Controller {
             }
         }
     }
-
 
     function imgDel() {
 
