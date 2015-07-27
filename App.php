@@ -20,6 +20,6 @@ class App {
 	}
 
 	static function get($id) {
-		return static::$container[$id];
+		return isset(static::$container[$id]) ? static::$container[$id] : false;
 	}
 }
