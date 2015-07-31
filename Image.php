@@ -123,7 +123,6 @@ class Image {
 		$f = $this->createFuncName;
 		$isrc = $f($this->file);
 		$idest = imagecreatetruecolor($new_width, $new_height);
-		//imageAlphaBlending($idest, false);
 
 		imageAlphaBlending($idest, false);
 		imagecopyresampled($idest, $isrc, 0, 0, 0, 0,$new_width, $new_height, $this->size[0], $this->size[1]);
@@ -213,7 +212,6 @@ class Image {
 		$f = $this->createFuncName;
 		$isrc = $f($this->file);
 		$idest = imagecreatetruecolor($new_width, $new_height);
-		//imageAlphaBlending($idest, false);
 
 		imageAlphaBlending($idest, false);
 		imagecopyresampled($idest, $isrc, 0, 0, 0, 0,$new_width, $new_height, $this->size[0], $this->size[1]);
@@ -252,7 +250,6 @@ class Image {
 		$f = $this->createFuncName;
 		$isrc = $f($this->file);
 		$idest = imagecreatetruecolor($new_width, $new_height);
-		//imageAlphaBlending($idest, false);
 
 		imageAlphaBlending($idest, false);
 		imagecopyresampled($idest, $isrc, 0, 0, 0, 0,$new_width, $new_height, $this->size[0], $this->size[1]);

@@ -1,7 +1,7 @@
 <?php namespace Mirage;
 
 class Tpl {
-	
+
 	public $smarty;
 
 	function __construct($layout = "default") {
@@ -26,12 +26,11 @@ class Tpl {
 			$smarty->compile_check = false;
 		}
 
-		//var_dump(__DIR__);
 		$smarty->addPluginsDir(__DIR__.'/Smarty/plugins');
 
 		$my_security_policy = new \Smarty_Security($smarty);
 		$my_security_policy->php_modifiers = array();
-		$my_security_policy->php_functions = array('count','in_array','is_array','time','ucfirst','mb_strtolower');
+		$my_security_policy->php_functions = array('is_array','time','mb_strtolower');
 
 		$smarty->enableSecurity($my_security_policy);
 
