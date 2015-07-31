@@ -152,6 +152,17 @@ class Router {
     }
 
 
+	/**
+	 * Shorthand for a route accessed using CLI
+	 *
+	 * @param string $pattern A route pattern such as /about/system
+	 * @param object|string $fn The handling function to be executed
+	 */
+	public function cli($pattern, $fn) {
+		$this->match('CLI', $pattern, $fn);
+	}
+
+
     /**
      * Mounts a collection of callables onto a base route
      *
