@@ -227,6 +227,8 @@ class Odmin extends Controller {
                     if(!empty($this->entity['list']['columns'][$key]['callback'])) {
                         $callback = $this->entity['list']['columns'][$key]['callback'];
                         $dbr[$row_key][$key] = $this->$callback($value);
+                    } elseif(!empty($this->entity['list']['columns'][$key]['option'])) {
+                        $dbr[$row_key][$key] = !empty($this->entity['list']['columns'][$key]['group']) ? current(Settings::key($value, $this->entity['list']['columns'][$key]['group']))['value'] : current(Settings::key($value))['value'];
                     }
                 }
             }
@@ -298,7 +300,7 @@ class Odmin extends Controller {
                 if(!empty($this->entity['add']['fields'][$key]['type']) && $this->entity['add']['fields'][$key]['type']=="editor") {
                     $data[$key] = htmlspecialchars($value);
                 }
-                if(!empty($this->entity['add']['fields'][$key]['multi'])) {
+                if(!empty($this->entity['add']['fields'][$key]['multi']) && empty($this->entity['add']['fields'][$key]['handler'])) {
                     $data[$key] = unserialize($value);
                 }
             }
