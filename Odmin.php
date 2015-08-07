@@ -337,8 +337,7 @@ class Odmin extends Controller {
                         }
                         $fields[$key]['vals'] = $vals;
                     } elseif ($field['source'] == "option" && !empty($field['group'])) {
-                        $opt = new \Model\Odmin\Options();
-                        $fields[$key]['vals'] = $opt->group($field['group']);
+                        $fields[$key]['vals'] = Settings::group($field['group']);
                     } elseif ($field['source'] == "model") {
                         $fields[$key]['vals'] = $this->model->{$field['method']}();
                     }
