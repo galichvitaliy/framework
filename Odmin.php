@@ -73,7 +73,7 @@ class Odmin extends Controller {
 			} elseif($this->cms_action == "edit") {
 				$this->simpleForm($this->getVal("edit"));
 			} elseif($this->cms_action == "clone" && $this->getVal("clone")) {
-				$this->simpleClone($this->getVal("clone"));
+				$this->simpleClone($this->entity, $this->getVal("clone"));
 			} elseif($this->cms_action == "delete" && $this->getVal("delete")) {
 
 				if (!empty($this->entity['remove']['method'])) {
