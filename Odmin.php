@@ -71,7 +71,9 @@ class Odmin extends Controller {
 					$this->simpleForm();
 				}
 			} elseif($this->cms_action == "edit") {
-				$this->simpleForm($this->getVal("edit"));
+                $this->simpleForm($this->getVal("edit"));
+            } elseif($this->cms_action == "clone") {
+                $this->simpleClone(HTTP::POST("clone"));
 			} elseif($this->cms_action == "delete" && $this->getVal("delete")) {
 
 				if (!empty($this->entity['remove']['method'])) {
@@ -386,6 +388,20 @@ class Odmin extends Controller {
         }
         echo json_encode($st);
     }
+
+	function simpleClone($entity, $id = false) {
+		$st = false;
+        if($id) {
+            $id = ($id);
+			$ids = urldecode((int)$id);
+			$bean = DB::load( $entity['table'], $ids );
+			$duplicated = DB::duplicate( $bean );
+			if(DB::store( $duplicated )) {
+				$st = true;
+			}
+		}
+		echo json_encode($st);
+	}
 
     function loadSimpleData($fields, $id) {
 
