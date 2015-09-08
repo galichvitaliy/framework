@@ -1,4 +1,6 @@
-<?php namespace Mirage;
+<?php
+
+namespace Mirage;
 
 class Tpl {
 
@@ -19,14 +21,18 @@ class Tpl {
 		$smarty->config_dir     = App::get('runtime_dir')."/smarty_configs";
 		$smarty->error_reporting	=  E_ALL & ~E_NOTICE;
 		$smarty->inheritance_merge_compiled_includes = false;
+
+		$smarty->addPluginsDir(__DIR__.'/Smarty/plugins');
+
 		if( Config::get('web.dev') ) {
 			$smarty->force_compile = true;
 			$smarty->assign("dev", true);
+			if( Config::get('web.debug') ) {
+				$smarty->loadFilter("output", "debugbar");
+			}
 		} else {
 			$smarty->compile_check = false;
 		}
-
-		$smarty->addPluginsDir(__DIR__.'/Smarty/plugins');
 
 		$my_security_policy = new \Smarty_Security($smarty);
 		$my_security_policy->php_modifiers = array();
