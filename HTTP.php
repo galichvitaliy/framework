@@ -55,6 +55,16 @@ class HTTP {
 		return isset($_POST[$id]) ? $_POST[$id] : false;
 	}
 
+	static public function postAll($decoded = false) {
+		$vals = $_POST;
+		if($decoded && $vals) {
+			foreach ($vals as $key => $value) {
+				$vals[$key] = urldecode($value);
+			}
+		}
+		return !empty($vals) ? $vals : false;
+	}
+
 	static public function cookie($id) {
 		return isset($_COOKIE[$id]) ? $_COOKIE[$id] : false;
 	}
