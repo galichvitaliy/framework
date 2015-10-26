@@ -34,7 +34,7 @@ class Page extends Controller {
 	}
 
 	public function error() {
-
+		function_exists('http_response_code') ? http_response_code(404) : header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found");
 		$tpl = App::get('view');
 		$tpl->display('404.tpl');
 		exit();
