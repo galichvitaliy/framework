@@ -405,13 +405,21 @@ class Odmin extends Controller {
 
 	function loadSimpleData($fields, $id) {
 
-		$field = array();
+		$field = [];
+		$model_fields = [];
 
 		if(isset($this->entity['hash']) && $this->entity['hash'] == true) {
 			$field[] = "hash";
 		}
 
 		foreach ($fields as $key => $opt) {
+
+			if(!empty($this->entity['add']['fields'][$key]['handler'])) {
+				$model_fields[] = $key;
+				if(empty($this->entity['add']['fields'][$key]['skip_load'])) {
+					continue;
+				}
+			}
 			switch ($opt['type']) {
 
 				case 'files':
@@ -434,6 +442,10 @@ class Odmin extends Controller {
 		}
 
 		$res = DB::getRow("SELECT `".implode("`, `", $field)."` FROM {$this->entity['table']} WHERE {$this->entity['primary_id']} = '$id'");
+
+		if(!empty($this->entity['ex_load']) && !empty($this->entity['model'])){
+			$res = $this->model->{$this->entity['ex_load']}($id, $model_fields, $res);
+		}
 
 		return !empty($res) ? $res : false;
 	}
