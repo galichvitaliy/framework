@@ -25,7 +25,7 @@ class Config {
 			return false;
 		}
 
-		list($file, $param) = explode(".", $id);
+		list($file, $param) = explode(".", $id, 2);
 		if(file_exists(App::get('app_dir')."/config/".$file.".php")) {
 			$params = require(App::get('app_dir')."/config/".$file.".php");
 			$value = !empty($params[$param]) ? $params[$param] : false;
