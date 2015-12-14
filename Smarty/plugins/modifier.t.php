@@ -24,7 +24,7 @@ function smarty_modifier_t($string, array $replace = array(), $override_lang = f
 	$lang = $override_lang ? $override_lang : App::get('lang');
 	list($file, $name) = explode(".", $string);
 
-	$path = App::get('root_dir')."/template/".App::get('layout')."/lang/$lang/".$file.".inc";
+	$path = (App::get('lang_path') ? App::get('lang_path') : (App::get('root_dir'). "/template/".App::get('layout')."/lang/"))."{$lang}/{$file}.inc";
 
 	if(!empty($file) && file_exists($path)) {
 		$lines = require($path);
