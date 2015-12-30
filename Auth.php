@@ -21,12 +21,12 @@ class Auth {
 	static function attempt($param = [], $remember = false) {
 		if(self::validate($param)) {
 			self::createSession(self::$user['id'], $remember); //auth
-			$cookie = [
+			/*$cookie = [
 				'login'  => self::$user['login'],
 				'photo'  => self::$user['photo'],
 				'email'  => self::$user['email']
 			];
-			setcookie('lli', base64_encode(serialize($cookie)), time()+1209600, "/");
+			setcookie('lli', base64_encode(serialize($cookie)), time()+1209600, "/");*/
 			$session = App::get('session');
 			$session->set('user', self::$user);
 			return true;
