@@ -54,13 +54,24 @@ class Auth {
 	/**
 	 * Validating User Credentials Without Login
 	 */
-	static function validate($param = []) {
+	static function validate($param = [], $options = [])
+	{
 
-		$ident = isset($param['ident']) ? $param['ident'] : 'email';
+		//default fields is email and password, but may be overridden via options array
+		$password = isset($options['password']) ? $options['password'] : 'password';
 
-		$user = DB::findOne('users', " $ident = ? ", [$param[$ident],]);
+		$check_array = [];
+		$check_sql = "1";
+		foreach ($param as $key => $item) {
+			if ($key != $password) {
+				$check_array[":$key"] = $item;
+				$check_sql .= " AND $key = :$key ";
+			}
+		}
 
-		if(password_verify($param['password'], $user->password)) {
+		$user = DB::findOne('users', $check_sql, $check_array);
+
+		if (password_verify($param[$password], $user->$password)) {
 			if($user->group > 0) {
 				$user['rights'] = self::loadRights((int)$user->group);
 			}
