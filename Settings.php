@@ -29,7 +29,7 @@ class Settings {
 		if(!empty($name)) {
 			//if(!$key = $this->cache->load("options_key_".$group."_".$name)) {
 			$group = $group ? self::group2Id($group) : 0;
-			$key = DB::getAll("SELECT `value` FROM `options` WHERE `_key`=? AND `group`=?", [$name, $group]);
+			$key = DB::getCell("SELECT `value` FROM `options` WHERE `_key`=? AND `group`=?", [$name, $group]);
 			//$this->cache->save($key, "options_key_".$group."_".$name, 7200);
 			//}
 			return isset($key) ? $key : false;
