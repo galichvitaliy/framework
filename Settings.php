@@ -13,13 +13,7 @@ class Settings {
 
 	static function group($name = false) {
 		//if(!$group = $this->cache->load('options_group_'.$name)) {
-		$items = DB::getAll("SELECT `_key` id, `value` FROM `options` o, options_groups og WHERE og.alias=:alias AND o.group=og.id ORDER BY o.`order`", [':alias'=>$name]);
-		if($items) {
-			$group = array();
-			foreach($items as $item) {
-				$group[$item['id']] = $item['value'];
-			}
-		}
+		$group = DB::getAssoc("SELECT `_key` id, `value` FROM `options` o, options_groups og WHERE og.alias=:alias AND o.group=og.id ORDER BY o.`order`", [':alias'=>$name]);
 		//$this->cache->save($group, 'options_group_'.$name, 7200);
 		//}
 		return !empty($group) ? $group : false;
