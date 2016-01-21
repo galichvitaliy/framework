@@ -300,7 +300,7 @@ class Router {
 		foreach ($routes as $route) {
 
 			// we have a match!
-			if (preg_match_all('#^' . $route['pattern'] . '$#', $uri, $matches, PREG_OFFSET_CAPTURE)) {
+			if (preg_match_all('#(*UTF8)^' . $route['pattern'] . '$#', $uri, $matches, PREG_OFFSET_CAPTURE)) {
 
 				// Rework matches to only contain the matches, not the orig string
 				$matches = array_slice($matches, 1);
