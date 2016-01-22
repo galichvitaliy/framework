@@ -341,9 +341,15 @@ class Odmin extends Controller {
 					} elseif ($field['source'] == "option" && !empty($field['group'])) {
 						$fields[$key]['vals'] = Settings::group($field['group']);
 					} elseif ($field['source'] == "model") {
-						$fields[$key]['vals'] = $this->model->{$field['method']}();
-					}
-					elseif($field['source'] == "enum") {
+						if(strpos($field['method'], "@") !== false) {
+							list($class, $method) = explode("@", $field['method']);
+							$class = ucfirst($class);
+							$fn = [new $class, $method];
+							$fields[$key]['vals'] = $fn();
+						} else {
+							$fields[$key]['vals'] = $this->model->{$field['method']}();
+						}
+					} elseif($field['source'] == "enum") {
 						$fields[$key]['vals']  = $this->get_enum_values($this->entity['table'], $key);
 					}
 
