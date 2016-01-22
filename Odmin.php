@@ -230,7 +230,7 @@ class Odmin extends Controller {
 						$callback = $this->entity['list']['columns'][$key]['callback'];
 						$dbr[$row_key][$key] = $this->$callback($value);
 					} elseif(!empty($this->entity['list']['columns'][$key]['option'])) {
-						$dbr[$row_key][$key] = !empty($this->entity['list']['columns'][$key]['group']) ? current(Settings::key($value, $this->entity['list']['columns'][$key]['group']))['value'] : current(Settings::key($value))['value'];
+						$dbr[$row_key][$key] = !empty($this->entity['list']['columns'][$key]['group']) ? Settings::key($value, $this->entity['list']['columns'][$key]['group']) : Settings::key($value);
 					}
 				}
 			}
