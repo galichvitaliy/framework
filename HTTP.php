@@ -20,6 +20,7 @@ class HTTP {
 	static $page = 1;
 	static $link = [];
 	static $link_index = [];
+	static $page_localisation = "page";
 
 	static public function setRouting() {
 		$input_url = current(explode("?", strtolower($_SERVER['REQUEST_URI']))); //clean string from ?params
@@ -35,7 +36,7 @@ class HTTP {
 		}
 
 		//check if last section is page, and store it in static vars
-		if(preg_match('/page-(?P<page>\d+)/', end($links), $matches)) {
+		if (preg_match('/' . self::$page_localisation . '-(?P<page>\d+)/', end($links), $matches)) {
 			self::$page = $matches['page'];
 		}
 
