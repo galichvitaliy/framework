@@ -155,7 +155,7 @@ class Auth {
 	 *
 	 */
 	static private function loadRights($group_id = false) {
-		$rights = DB::getCol('SELECT rules FROM users_groups WHERE id = ?', [$group_id]);
+		$rights = DB::getCell('SELECT rules FROM users_groups WHERE id = ?', [$group_id]);
 		return $rights ? unserialize($rights) : false;
 	}
 
