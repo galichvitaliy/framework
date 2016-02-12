@@ -82,8 +82,9 @@ class HTTP {
 		return isset(self::$link_index[$id]) ? self::$link_index[$id] : null;
 	}
 
-	static public function redirect($path = false) {
+	static public function redirect($path = false, $code = 301) {
 		$path = !empty($path) ? $path : $_SERVER['REQUEST_URI'];
+		http_response_code($code);
 		header("Location: " . $path);
 		flush();
 		exit();
