@@ -214,7 +214,15 @@ class Odmin extends Controller {
 		}
 
 		if(!empty($this->entity['list']['pagination'])) {
-			$sql = Helper::paginator($sql, $this->entity['list']['pagination']);
+			if (is_array($this->entity['list']['pagination'])) {
+				if (HTTP::get('pagination')) {
+					$sql = HTTP::get('pagination') == 'all' ? $sql : Helper::paginator($sql, HTTP::get('pagination'));
+				} else {
+					$sql = Helper::paginator($sql, $this->entity['list']['pagination'][0]);
+				}
+			} else {
+				$sql = Helper::paginator($sql, $this->entity['list']['pagination']);
+			}
 		}
 
 		if(!empty($this->entity['list']['load'])) {
