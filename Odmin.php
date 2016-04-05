@@ -9,12 +9,12 @@
 namespace Mirage;
 
 
-class Odmin extends Controller {
-
+class Odmin extends Controller
+{
 	protected $ext, $entity, $link, $action, $cms_action, $controller, $model;
 
-	function __construct() {
-
+	function __construct()
+	{
 		HTTP::$cms = true;
 		HTTP::$default_controller = 'odmin';
 
@@ -30,8 +30,8 @@ class Odmin extends Controller {
 
 	}
 
-	function run() {
-
+	function run()
+	{
 		//$this->tpl->display('index.tpl');
 
 		if(!Auth::check() && $this->action != "login") {
@@ -101,14 +101,15 @@ class Odmin extends Controller {
 					$this->simpleList();
 				}
 			}
-		} elseif( method_exists($this, $this->action ) ) {
+		} elseif( method_exists($this, $this->action) ) {
 			$this->{$this->action}();
 		} else {
 			$this->index();
 		}
 	}
 
-	function setRouting() {
+	function setRouting()
+	{
 		$input_url = current(explode("?", strtolower($_SERVER['REQUEST_URI']))); //clean string from ?params
 		$input_url = trim($input_url, '/');
 
@@ -129,7 +130,8 @@ class Odmin extends Controller {
 	}
 
 	//TODO: should be replaced with HTTP methods
-	function getVal($name, $default = false) {
+	function getVal($name, $default = false)
+	{
 		if (isset($_POST[$name]) && $_POST[$name]) {
 			return $_POST[$name];
 		} elseif (isset($_GET[$name]) && $_GET[$name]) {
@@ -144,7 +146,8 @@ class Odmin extends Controller {
 	}
 
 	//TODO: should be replaced with HTTP methods
-	function getAllValsDecoded() {
+	function getAllValsDecoded()
+	{
 		if ($_POST) {
 			$vals = $_POST;
 		} elseif ($_GET) {
@@ -162,9 +165,9 @@ class Odmin extends Controller {
 		return $vals;
 	}
 
-	function simpleList() {
-
-		if(!empty($this->entity['list']['sql'])) {
+	function simpleList()
+	{
+		if (!empty($this->entity['list']['sql'])) {
 			$sql = $this->entity['list']['sql'];
 		} else {
 			//build query
@@ -195,11 +198,23 @@ class Odmin extends Controller {
 			}
 
 			$sql = substr($sql, 0, -2);
-			$sql .= " FROM {$this->entity['list']['table']} $join WHERE 1 ORDER BY {$this->entity['list']['table']}.".(!empty($this->entity['list']['order_by']) ? $this->entity['list']['order_by'] : $this->entity['list']['primary_id']." DESC");
 
+			if (!empty($this->entity['list']['order_by'])) {
+				list($by, $order) = explode(' ', $this->entity['list']['order_by']);
+			} else {
+				list($by, $order) = [$this->entity['list']['primary_id'], "DESC"];
+			}
+
+			if (!empty($this->entity['list']['orderable'])) {
+				$by = HTTP::get('by') ? HTTP::get('by') : $by;
+				$order = HTTP::get('order') ? HTTP::get('order') : $order;
+			}
+
+			$sql .= " FROM {$this->entity['list']['table']} $join WHERE 1 ORDER BY {$this->entity['list']['table']}.".$by." ".$order;
+			//$sql .= " FROM {$this->entity['list']['table']} $join WHERE 1 ORDER BY {$this->entity['list']['table']}.".(!empty($this->entity['list']['order_by']) ? $this->entity['list']['order_by'] : $this->entity['list']['primary_id']." DESC");
 		}
 
-		if(!empty($this->entity['list']['filter'])) {
+		if (!empty($this->entity['list']['filter'])) {
 			$sql = $this->model->{$this->entity['list']['filter']}($sql);
 
 			//load filter vars, if available and pass it to template
@@ -213,7 +228,7 @@ class Odmin extends Controller {
 			}
 		}
 
-		if(!empty($this->entity['list']['pagination'])) {
+		if (!empty($this->entity['list']['pagination'])) {
 			if (is_array($this->entity['list']['pagination'])) {
 				if (HTTP::get('pagination')) {
 					$sql = HTTP::get('pagination') == 'all' ? $sql : Helper::paginator($sql, HTTP::get('pagination'));
@@ -225,14 +240,13 @@ class Odmin extends Controller {
 			}
 		}
 
-		if(!empty($this->entity['list']['load'])) {
+		if (!empty($this->entity['list']['load'])) {
 			$dbr = $this->model->{$this->entity['list']['load']}();
 		} else {
-			//$dbr = $this->db->select($sql);
 			$dbr = DB::getAll($sql);
 		}
 
-		if($dbr) {
+		if ($dbr) {
 			foreach ($dbr as $row_key => $row) {
 				foreach ($row as $key => $value) {
 					if(!empty($this->entity['list']['columns'][$key]['callback'])) {
@@ -249,30 +263,15 @@ class Odmin extends Controller {
 		$this->tpl->assign('title', $this->entity['title']);
 		$this->tpl->assign('entity', $this->entity);
 
-		if(file_exists(App::get('root_dir')."/template/".App::get('layout')."/tpl/filter/".$this->entity['name'].".tpl")) {
+		if (!empty($_GET)) {
+			$this->tpl->assign('filter', $_GET);
+		}
 
-			/* remove this, or refactor */
-			/*if ($_POST && empty($_POST['fetch'])) {
-				$query_string = "";
-				foreach ($_POST as $p_key => $p_value) {
-					if(!empty($p_value)) {
-						$query_string .= "/$p_key/".urlencode($p_value);
-					}
-				}
-
-				//$search = $this->getVal('query');
-				//$search_search = $search ? "/query/".urlencode($search) : "";
-
-				$this->redirect_to("/{$this->controller}/".$this->entity['name'].$query_string);
-			}*/
-			if(!empty($_GET)) {
-				$this->tpl->assign('filter', $_GET);
-			}
-
+		if (file_exists(App::get('root_dir')."/template/".App::get('layout')."/tpl/filter/".$this->entity['name'].".tpl")) {
 			$this->tpl->assign('filter_tpl', $this->entity['name']);
 		}
 
-		if(!empty($_POST['fetch'])) {
+		if (!empty($_POST['fetch'])) {
 			$html = $this->tpl->fetch("list.tpl");
 			echo json_encode($html);
 		} else {
@@ -282,8 +281,8 @@ class Odmin extends Controller {
 	}
 
 
-	function simpleForm($id = false) {
-
+	function simpleForm($id = false)
+	{
 		$act = $id ? "edit" : "add";
 		//$source_array = array("select", "select_dual", "radio");
 
@@ -388,7 +387,8 @@ class Odmin extends Controller {
 		}
 	}
 
-	function simpleDelete($entity, $id = false) {
+	function simpleDelete($entity, $id = false)
+	{
 		$st = false;
 		if($id) {
 			if(is_array($id)) {
@@ -404,7 +404,8 @@ class Odmin extends Controller {
 		echo json_encode($st);
 	}
 
-	function simpleClone($entity, $id = false) {
+	function simpleClone($entity, $id = false)
+	{
 		$st = false;
 		if($id) {
 			$id = ($id);
@@ -418,8 +419,8 @@ class Odmin extends Controller {
 		echo json_encode($st);
 	}
 
-	function loadSimpleData($fields, $id) {
-
+	function loadSimpleData($fields, $id)
+	{
 		$field = [];
 		$model_fields = [];
 
@@ -465,8 +466,8 @@ class Odmin extends Controller {
 		return !empty($res) ? $res : false;
 	}
 
-	function img() {
-
+	function img()
+	{
 		$key = HTTP::post('key');
 		$fields = is_array($this->entity["add"]['fields']) ? $this->entity["add"]['fields'] : false;//wtf??
 		$db_fields = $this->prepareFields($fields);
@@ -529,8 +530,8 @@ class Odmin extends Controller {
 		}
 	}
 
-	function imgLoad() {
-
+	function imgLoad()
+	{
 		$id = HTTP::post('id');
 		$path = "/".HTTP::post('path');
 		$path .= HTTP::post('hash') ? HTTP::post('hash')."/" : '';
@@ -551,8 +552,8 @@ class Odmin extends Controller {
 		}
 	}
 
-	function imgDel() {
-
+	function imgDel()
+	{
 		$key = HTTP::post('key');
 		$filename = HTTP::post('filename');
 		$hash = HTTP::post('hash') ? HTTP::post('hash').'/' : '';
