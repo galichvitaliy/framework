@@ -199,18 +199,25 @@ class Odmin extends Controller
 
 			$sql = substr($sql, 0, -2);
 
+			$orderBy = '';
 			if (!empty($this->entity['list']['order_by'])) {
-				list($by, $order) = explode(' ', $this->entity['list']['order_by']);
+				if(is_array($this->entity['list']['order_by'])) {
+					$last_key = key( array_slice($this->entity['list']['order_by'], -1, 1, TRUE) );
+					foreach($this->entity['list']['order_by'] as $key => $ord) {
+						$orderBy .= $ord['field'] ? $ord['field'] . ' ' . $ord['direction'] . ($key != $last_key ? ', ' : '') : '';
+					}
+				} else {
+					$orderBy = $this->entity['list']['order_by'];
+				}
 			} else {
-				list($by, $order) = [$this->entity['list']['primary_id'], "DESC"];
+				$orderBy = $this->entity['list']['primary_id'] . " DESC";
 			}
 
 			if (!empty($this->entity['list']['orderable'])) {
-				$by = HTTP::get('by') ? HTTP::get('by') : $by;
-				$order = HTTP::get('order') ? HTTP::get('order') : $order;
+				$orderBy = HTTP::get('by') ? HTTP::get('by') . (HTTP::get('order') ? ' '.HTTP::get('order') : '') : $orderBy;
 			}
 
-			$sql .= " FROM {$this->entity['list']['table']} $join WHERE 1 ORDER BY {$this->entity['list']['table']}.".$by." ".$order;
+			$sql .= " FROM {$this->entity['list']['table']} $join WHERE 1 ORDER BY {$this->entity['list']['table']}.".$orderBy;
 			//$sql .= " FROM {$this->entity['list']['table']} $join WHERE 1 ORDER BY {$this->entity['list']['table']}.".(!empty($this->entity['list']['order_by']) ? $this->entity['list']['order_by'] : $this->entity['list']['primary_id']." DESC");
 		}
 
