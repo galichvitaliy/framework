@@ -22,14 +22,9 @@ class Image {
 	function __construct($gFile='',$outFunc=''){
 		if ($gFile!='') $this->file = $gFile;
 
-		if (!file_exists($this->file)){
-			$this->error = "Can't find source image";
-			return false;
-		}
-
 		$this->size = getimagesize($this->file);
 		if ($this->size === false){
-			$this->error = "Can't read size information";
+			$this->error = "Can't find source image or read size information";
 			return false;
 		}
 
