@@ -11,7 +11,8 @@ namespace Mirage;
 
 class Lang {
 
-	static public function get($string, array $replace = array(), $override_lang = false) {
+	static public function get($string, array $replace = array(), $override_lang = false)
+	{
 
 		$lang = $override_lang ? $override_lang : App::get('lang');
 		list($file, $name) = explode(".", $string);

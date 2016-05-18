@@ -6,7 +6,7 @@
  * Date: 18.05.2016
  * Time: 12:55
  */
-class Session extends SessionHandler
+class Session extends \SessionHandler
 {
 
 	protected $key, $name, $cookie;

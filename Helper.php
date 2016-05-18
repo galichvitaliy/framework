@@ -1,17 +1,9 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: Виталий
- * Date: 01.02.2015
- * Time: 17:42
- */
-
-namespace Mirage;
-
+<?php namespace Mirage;
 
 class Helper {
 
-	static public function checkDir($dir = false) {
+	static public function checkDir($dir = false)
+	{
 		if(is_dir($dir)) {
 			if(!is_writable($dir)) {
 				exit("'$dir' must be writable!");
@@ -21,7 +13,8 @@ class Helper {
 		}
 	}
 
-	static public function delTree($dir) {
+	static public function delTree($dir)
+	{
 		$files = array_diff(scandir($dir), array('.','..'));
 		foreach ($files as $file) {
 			(is_dir("$dir/$file")) ? self::delTree("$dir/$file") : unlink("$dir/$file");
@@ -30,7 +23,8 @@ class Helper {
 	}
 
 
-	static public function translit($string) {
+	static public function translit($string)
+	{
 		$charlist = array(
 			"А"=>"A","Б"=>"B","В"=>"V","Г"=>"G",
 			"Д"=>"D","Е"=>"E","Ж"=>"J","З"=>"Z","И"=>"I",
@@ -49,7 +43,8 @@ class Helper {
 		return strtr($string,$charlist);
 	}
 
-	static public function recursiveFilename($path, $filename, $ext, $i=false) {
+	static public function recursiveFilename($path, $filename, $ext, $i=false)
+	{
 
 		$add = $i ? "_".$i : "";
 
@@ -61,7 +56,8 @@ class Helper {
 		}
 	}
 
-	static public function base_encode($num, $alphabet = "23456789abcdefghijkmnpqrstuvwxyz") {
+	static public function base_encode($num, $alphabet = "23456789abcdefghijkmnpqrstuvwxyz")
+	{
 		$base_count = strlen($alphabet);
 		$encoded = '';
 		while ($num >= $base_count) {
@@ -76,7 +72,8 @@ class Helper {
 		return $encoded;
 	}
 
-	static public function uniqHash($table, $field="hash") {
+	static public function uniqHash($table, $field="hash")
+	{
 
 		$hash = self::base_encode(mt_rand(10000000, 99999999));
 		$exist = DB::getCell("SELECT 1 FROM $table WHERE $field=:field LIMIT 1", [':field' => $hash]);
@@ -89,7 +86,8 @@ class Helper {
 
 	}
 
-	static public function paginator($sql, $klvo = 10, $pnum = 9, $bind_params = []) {
+	static public function paginator($sql, $klvo = 10, $pnum = 9, $bind_params = [])
+	{
 		$page   = HTTP::$page;
 		$layout = $klvo * ($page - 1);
 
@@ -138,7 +136,8 @@ class Helper {
 		return $sql;
 	}
 
-	static public function formatBytes($bytes, $precision = 2) {
+	static public function formatBytes($bytes, $precision = 2)
+	{
 		$units = array('б', 'Кб', 'Мб', 'Гб', 'Тб');
 
 		$bytes = max($bytes, 0);

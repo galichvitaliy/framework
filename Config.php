@@ -1,13 +1,4 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: Виталий
- * Date: 25.12.2014
- * Time: 11:44
- */
-
-namespace Mirage;
-
+<?php namespace Mirage;
 
 class Config {
 

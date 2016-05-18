@@ -1,16 +1,6 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: galych
- * Date: 14.01.15
- * Time: 15:36
- */
-
-namespace Mirage;
-
+<?php namespace Mirage;
 
 class Auth {
-
 
 	static $user = array();
 	static $cookie = false;
