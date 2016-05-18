@@ -2,7 +2,8 @@
 
 class Router {
 
-	function __construct() {
+	function __construct()
+	{
 		$this->uri = $this->getCurrentUri();
 		$this->detectLanguage();
 	}
@@ -49,7 +50,8 @@ class Router {
 	 * @param string $pattern A route pattern such as /about/system
 	 * @param object|callable $fn The handling function to be executed
 	 */
-	public function before($methods, $pattern, $fn) {
+	public function before($methods, $pattern, $fn)
+	{
 		$pattern = $this->baseroute . '/' . trim($pattern, '/');
 		$pattern = $this->baseroute ? rtrim($pattern, '/') : $pattern;
 
@@ -68,7 +70,8 @@ class Router {
 	 * @param string $pattern A route pattern such as /about/system
 	 * @param object $fn The handling function to be executed
 	 */
-	public function match($methods, $pattern, $fn) {
+	public function match($methods, $pattern, $fn)
+	{
 		$pattern = $this->baseroute . '/' . trim($pattern, '/');
 		$pattern = $this->baseroute ? rtrim($pattern, '/') : $pattern;
 
@@ -86,7 +89,8 @@ class Router {
 	* @param string $pattern A route pattern such as /about/system
 	* @param object|string $fn The handling function to be executed
 	*/
-	public function get($pattern, $fn) {
+	public function get($pattern, $fn)
+	{
 		$this->match('GET', $pattern, $fn);
 	}
 
@@ -96,7 +100,8 @@ class Router {
 	* @param string $pattern A route pattern such as /about/system
 	* @param object|string $fn The handling function to be executed
 	*/
-	public function post($pattern, $fn) {
+	public function post($pattern, $fn)
+	{
 		$this->match('POST', $pattern, $fn);
 	}
 
@@ -106,7 +111,8 @@ class Router {
 	* @param string $pattern A route pattern such as /about/system
 	* @param object|string $fn The handling function to be executed
 	*/
-	public function patch($pattern, $fn) {
+	public function patch($pattern, $fn)
+	{
 		$this->match('PATCH', $pattern, $fn);
 	}
 
@@ -116,7 +122,8 @@ class Router {
 	* @param string $pattern A route pattern such as /about/system
 	* @param object|string $fn The handling function to be executed
 	*/
-	public function delete($pattern, $fn) {
+	public function delete($pattern, $fn)
+	{
 		$this->match('DELETE', $pattern, $fn);
 	}
 
@@ -126,7 +133,8 @@ class Router {
 	* @param string $pattern A route pattern such as /about/system
 	* @param object|string $fn The handling function to be executed
 	*/
-	public function put($pattern, $fn) {
+	public function put($pattern, $fn)
+	{
 		$this->match('PUT', $pattern, $fn);
 	}
 
@@ -136,7 +144,8 @@ class Router {
 	* @param string $pattern A route pattern such as /about/system
 	* @param object|string $fn The handling function to be executed
 	*/
-	public function options($pattern, $fn) {
+	public function options($pattern, $fn)
+	{
 		$this->match('OPTIONS', $pattern, $fn);
 	}
 
@@ -146,7 +155,8 @@ class Router {
 	 * @param string $pattern A route pattern such as /about/system
 	 * @param object|string $fn The handling function to be executed
 	 */
-	public function cli($pattern, $fn) {
+	public function cli($pattern, $fn)
+	{
 		$this->match('CLI', $pattern, $fn);
 	}
 
@@ -156,7 +166,8 @@ class Router {
 	* @param string $baseroute The route subpattern to mount the callables on
 	* @param callable $fn The callabled to be called
 	*/
-	public function mount($baseroute, $fn) {
+	public function mount($baseroute, $fn)
+	{
 		// Track current baseroute
 		$curBaseroute = $this->baseroute;
 
@@ -173,7 +184,8 @@ class Router {
 	/**
 	 *
 	 */
-	function fn($fn) {
+	function fn($fn)
+	{
 		if(is_array($fn) || is_object($fn)) {
 			return $fn;
 		}
@@ -192,7 +204,8 @@ class Router {
 	 * Get all request headers
 	 * @return array The request headers
 	 */
-	public function getRequestHeaders() {
+	public function getRequestHeaders()
+	{
 		// getallheaders available, use that
 		if (function_exists('getallheaders')) return getallheaders();
 
@@ -210,7 +223,8 @@ class Router {
 	 * Get the request method used, taking overrides into account
 	 * @return string The Request method to handle
 	 */
-	public function getRequestMethod() {
+	public function getRequestMethod()
+	{
 		// Take the method as found in $_SERVER
 		$method = $_SERVER['REQUEST_METHOD'];
 
@@ -237,7 +251,8 @@ class Router {
 	 *
 	 * @param object $callback Function to be executed after a matching route was handled (= after router middleware)
 	 */
-	public function run($callback = null) {
+	public function run($callback = null)
+	{
 		// Define which method we need to handle
 		$this->method = $this->getRequestMethod();
 
@@ -276,7 +291,8 @@ class Router {
 	 * Set the 404 handling function
 	 * @param object $fn The function to be executed
 	 */
-	public function set404($fn) {
+	public function set404($fn)
+	{
 		$this->notFound = $fn;
 	}
 
@@ -286,7 +302,8 @@ class Router {
 	 * @param boolean $quitAfterRun Does the handle function need to quit after one route was matched?
 	 * @return int The number of routes handled
 	 */
-	private function handle($routes, $quitAfterRun = false) {
+	private function handle($routes, $quitAfterRun = false)
+	{
 		// Counter to keep track of the number of routes we've handled
 		$numHandled = 0;
 
@@ -340,7 +357,8 @@ class Router {
 	 * Define the current relative URI
 	 * @return string
 	 */
-	private function getCurrentUri() {
+	private function getCurrentUri()
+	{
 		// Get the current Request URI and remove rewrite basepath from it (= allows one to run the router in a subfolder)
 		$basepath = implode('/', array_slice(explode('/', $_SERVER['SCRIPT_NAME']), 0, -1)) . '/';
 		$uri = substr($_SERVER['REQUEST_URI'], strlen($basepath));
@@ -359,7 +377,8 @@ class Router {
 	/**
 	 *
 	 */
-	private function detectLanguage() {
+	private function detectLanguage()
+	{
 		if(Config::get('web.langs')) {
 			$regex = '/^\/('.implode("|",Config::get('web.langs')).')(\/|$)/i';
 			preg_match($regex, $this->uri, $matches);

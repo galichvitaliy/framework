@@ -11,15 +11,18 @@ class App {
 
 	static protected $container;
 
-	static function setContainer(\Pimple\Container $container) {
+	static function setContainer(\Pimple\Container $container)
+	{
 		static::$container = $container;
 	}
 
-	static function set($id, $value) {
+	static function set($id, $value)
+	{
 		static::$container[$id] = $value;
 	}
 
-	static function get($id) {
+	static function get($id)
+	{
 		return isset(static::$container[$id]) ? static::$container[$id] : false;
 	}
 }

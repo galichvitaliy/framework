@@ -18,7 +18,8 @@ class Auth {
 	/**
 	 *
 	 */
-	static function attempt($param = [], $remember = false) {
+	static function attempt($param = [], $remember = false)
+	{
 		if(self::validate($param)) {
 			self::createSession(self::$user['id'], $remember); //auth
 			/*$cookie = [
@@ -37,7 +38,8 @@ class Auth {
 	/**
 	 * Determining If A User Is Authenticated
 	 */
-	static function check() {
+	static function check()
+	{
 		$session = App::get('session');
 		return $session->get('auth');
 	}
@@ -45,7 +47,8 @@ class Auth {
 	/**
 	 * Get user data
 	 */
-	static function data($key = false) {
+	static function data($key = false)
+	{
 		$session = App::get('session');
 		$data = $session->get('user');
 		return $key ? (isset($data[$key]) ? $data[$key] : false) : $data;
@@ -54,7 +57,8 @@ class Auth {
 	/**
 	 * Validating User Credentials Without Login
 	 */
-	static function validate($param = [], $options = []) {
+	static function validate($param = [], $options = [])
+	{
 
 		//default fields is email and password, but may be overridden via options array
 		$password = isset($options['password']) ? $options['password'] : 'password';
@@ -84,7 +88,8 @@ class Auth {
 	/**
 	 * Validating User Credentials Without Login
 	 */
-	static private function createSession($uid, $remember = false) {
+	static private function createSession($uid, $remember = false)
+	{
 		$session = App::get('session');
 		if($remember) {
 			//$cookie = $uid . '|' . md5($uid . MD5_SOLT . $_SERVER['HTTP_USER_AGENT'] );
@@ -97,14 +102,16 @@ class Auth {
 	/**
 	 * Determining If User Authed Via Remember
 	 */
-	static function viaRemember() {
+	static function viaRemember()
+	{
 		return self::$cookie;
 	}
 
 	/**
 	 * Log a user into the application by their ID
 	 */
-	static function loginUsingId($id) {
+	static function loginUsingId($id)
+	{
 		$session = App::get('session');
 		$user = DB::load('users', $id);
 		if($user->group > 0) {
@@ -118,15 +125,17 @@ class Auth {
 	/**
 	 *
 	 */
-	static function logout() {
+	static function logout()
+	{
 		$session = App::get('session');
-		$session->invalidate();
+		$session->flush();
 	}
 
 	/**
 	 *
 	 */
-	static function hasRole($id = false) {
+	static function hasRole($id = false)
+	{
 		if(!self::check()) {
 			return false;
 		}
@@ -140,21 +149,24 @@ class Auth {
 	/**
 	 *
 	 */
-	static function isAdmin() {
+	static function isAdmin()
+	{
 		return self::hasRole('general.admin_access');
 	}
 
 	/**
 	 * Retrieve the authenticated user's ID
 	 */
-	static function id() {
+	static function id()
+	{
 		return self::data('id');
 	}
 
 	/**
 	 *
 	 */
-	static private function loadRights($group_id = false) {
+	static private function loadRights($group_id = false)
+	{
 		$rights = DB::getCell('SELECT rules FROM users_groups WHERE id = ?', [$group_id]);
 		return $rights ? unserialize($rights) : false;
 	}

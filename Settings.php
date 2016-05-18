@@ -1,13 +1,4 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: sergey-sla
- * Date: 06.08.2015
- * Time: 17:28
- */
-
-namespace Mirage;
-
+<?php namespace Mirage;
 
 class Settings {
 
