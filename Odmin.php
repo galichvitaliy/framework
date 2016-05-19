@@ -497,11 +497,14 @@ class Odmin extends Controller
 				$resize = new \Mirage\Image($tmp_path.$_FILES['img']['name'], !empty($ent['ext']) ? $ent['ext'] : "jpg");
 				$resize->outputQuality = 90;
 
+				$original_width = !empty($resize->size[0]) ? $resize->size[0] : 0;
+				$original_height = !empty($resize->size[1]) ? $resize->size[1] : 0;
+
 				foreach ($ent['sizes'] as $size) {
 					$crop = (!empty($size['crop']) && $size['crop']) ? $size['crop'] : false;
 					$fill = (!empty($size['fill']) && $size['fill']) ? $size['fill'] : false;
-					$width = !empty($size['width']) ? $size['width'] : false;
-					$height = !empty($size['height']) ? $size['height'] : false;
+					$width = !empty($size['width']) ? ($size['width'] < $original_width ? $size['width'] : $original_width) : false;
+					$height = !empty($size['height']) ? ($size['height'] < $original_height ? $size['height'] : $original_height) : false;
 					$prefix = !empty($size['prefix']) ? $size['prefix']."_" : '';
 					$wm = (!empty($size['watermark']) && $size['watermark']) ? $size['watermark'] : false;
 
