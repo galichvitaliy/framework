@@ -161,8 +161,8 @@ class Session extends \SessionHandler
 	public function isFingerprint()
 	{
 		$hash = md5(
-			$_SERVER['HTTP_USER_AGENT'] .
-			(ip2long($_SERVER['REMOTE_ADDR']) & ip2long('255.255.0.0'))
+			(isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '') .
+			(ip2long(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '') & ip2long('255.255.0.0'))
 		);
 
 		if (isset($_SESSION['_fingerprint'])) {
