@@ -127,7 +127,7 @@ class Session extends \SessionHandler
 		return session_regenerate_id($delete_old_session);
 	}
 
-	public function flash($key, $value)
+	public function flash($key)
 	{
 		if(isset($_SESSION['_flashBag'][$key])) {
 			$value = $_SESSION['_flashBag'][$key];
