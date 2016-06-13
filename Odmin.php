@@ -248,7 +248,7 @@ class Odmin extends Controller
 		}
 
 		if (!empty($this->entity['list']['load'])) {
-			$dbr = $this->model->{$this->entity['list']['load']}();
+			$dbr = $this->model->{$this->entity['list']['load']}($sql);
 		} else {
 			$dbr = DB::getAll($sql);
 		}
