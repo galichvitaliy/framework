@@ -12,6 +12,7 @@ use Mirage\Config;
 class CacheManager
 {
 	private $memcached = null;
+	private $memcache = null;
 	private $redis = null;
 	private static $repository_instance = null;
 
@@ -35,6 +36,28 @@ class CacheManager
 		}
 
 		return $this->repository(new MemcachedStore($this->memcached, $this->getPrefix()));
+	}
+
+	public function createMemcacheDriver()
+	{
+		if (is_null($this->memcache)) {
+
+			$this->memcache = new \Memcache;
+
+			$servers = Config::get('cache.memcache') ?: [];
+
+			foreach ($servers as $server) {
+
+				$this->memcache->addServer( $server['host'], $server['port'], $server['weight'] );
+			}
+
+			if ($this->memcache->getVersion() === false) {
+
+				throw new \RuntimeException("Could not establish Memcache connection.");
+			}
+		}
+
+		return $this->repository(new MemcacheStore($this->memcache, $this->getPrefix()));
 	}
 
 	public function createRedisDriver()
