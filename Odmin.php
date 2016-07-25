@@ -90,7 +90,7 @@ class Odmin extends Controller
 				}
 			} elseif ($this->cms_action == "ext") {
 				$method = $this->getVal("ext");
-				$this->model->$method($this->entity);
+				$this->model->$method($this->entity, $this->getVal("id"));
 
 			} elseif ( $this->cms_action == "act" && method_exists($this, $this->getVal("act")) ) {
 				$this->{$this->getVal("act")}();
