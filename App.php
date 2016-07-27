@@ -25,4 +25,11 @@ class App {
 	{
 		return isset(static::$container[$id]) ? static::$container[$id] : false;
 	}
+
+	static function remove($id)
+	{
+		if(isset(static::$container[$id])) {
+			unset(static::$container[$id]);
+		}
+	}
 }
