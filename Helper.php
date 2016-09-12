@@ -92,6 +92,7 @@ class Helper {
 		$layout = $klvo * ($page - 1);
 
 		$sql_num = preg_replace('|SELECT(.*?)FROM|s', "SELECT 1 FROM", $sql);
+		$sql_num = preg_replace('|ORDER BY(.*?)$|s', "", $sql_num);
 
 		$sql	= str_replace(";","",$sql);
 		$sql	= preg_replace('/LIMIT(.*?)$/Uis', "", $sql);

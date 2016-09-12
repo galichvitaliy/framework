@@ -169,6 +169,17 @@ class Odmin extends Controller
 	{
 		if (!empty($this->entity['list']['sql'])) {
 			$sql = $this->entity['list']['sql'];
+
+			if (!empty($this->entity['list']['orderable'])) {
+				if ($this->entity['list']['orderable'] === true) {
+					$orderBy = HTTP::get('by') ? HTTP::get('by') . (HTTP::get('order') ? ' '.HTTP::get('order') : '') : false;
+					if ($orderBy) {
+						$sql = preg_replace('/ORDER BY(.*?)$/s', "ORDER BY ".$orderBy, $sql);
+					}
+				} else {
+					$sql = $this->model->{$this->entity['list']['orderable']}($sql);
+				}
+			}
 		} else {
 			//build query
 
