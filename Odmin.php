@@ -199,7 +199,7 @@ class Odmin extends Controller
 				//}
 			}
 			//Check if is_active button is in config, and add this field for status
-			if(!empty($this->entity['list']['actions']) && in_array("is_active", $this->entity['list']['actions'])) {
+			if(!empty($this->entity['list']['actions']) && (in_array("is_active", $this->entity['list']['actions']) || in_array("one_active", $this->entity['list']['actions']))) {
 				$sql .= $this->entity['list']['table'].".is_active, ";
 			}
 
