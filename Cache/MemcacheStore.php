@@ -50,7 +50,7 @@ class MemcacheStore implements StoreInterface {
 		$this->memcache->flush();
 	}
 
-	public function getMemcached()
+	public function getMemcache()
 	{
 		return $this->memcache;
 	}
