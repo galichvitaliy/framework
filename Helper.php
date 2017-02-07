@@ -185,5 +185,16 @@ class Helper {
 		return trim($res);
 	}
 
+	static function convertFilesArray($files) {
+		$new_files_array = [];
+		foreach ($files as $name=>$file) {
+			foreach ($file as $key=>$val) {
+				$new_files_array[$key][$name] = $val;
+
+			}
+		}
+		return $new_files_array;
+	}
+
 
 } 
