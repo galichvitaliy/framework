@@ -247,14 +247,15 @@ class Odmin extends Controller
 		}
 
 		if (!empty($this->entity['list']['pagination'])) {
+			$max_limit = !empty($this->entity['list']['max_limit']) ? $this->entity['list']['max_limit'] : false;
 			if (is_array($this->entity['list']['pagination'])) {
 				if (HTTP::get('pagination')) {
-					$sql = HTTP::get('pagination') == 'all' ? $sql : Helper::paginator($sql, HTTP::get('pagination'));
+					$sql = HTTP::get('pagination') == 'all' ? $sql : Helper::paginator($sql, HTTP::get('pagination'), 9, [], $max_limit);
 				} else {
-					$sql = Helper::paginator($sql, $this->entity['list']['pagination'][0]);
+					$sql = Helper::paginator($sql, $this->entity['list']['pagination'][0], 9, [], $max_limit);
 				}
 			} else {
-				$sql = Helper::paginator($sql, $this->entity['list']['pagination']);
+				$sql = Helper::paginator($sql, $this->entity['list']['pagination'], 9, [], $max_limit);
 			}
 		}
 

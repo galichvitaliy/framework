@@ -86,13 +86,16 @@ class Helper {
 
 	}
 
-	static public function paginator($sql, $klvo = 10, $pnum = 9, $bind_params = [])
+	static public function paginator($sql, $klvo = 10, $pnum = 9, $bind_params = [], $max_limit = false)
 	{
 		$page   = HTTP::$page;
 		$layout = $klvo * ($page - 1);
 
 		$sql_num = preg_replace('|SELECT(.*?)FROM|s', "SELECT 1 FROM", $sql);
 		$sql_num = preg_replace('|ORDER BY(.*?)$|s', "", $sql_num);
+		if ($max_limit && is_numeric($max_limit)) {
+			$sql_num .= " LIMIT 0, $max_limit";
+		}
 
 		$sql	= str_replace(";","",$sql);
 		$sql	= preg_replace('/LIMIT(.*?)$/Uis', "", $sql);
