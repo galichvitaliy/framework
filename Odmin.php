@@ -182,34 +182,34 @@ class Odmin extends Controller
 			}
 		} else {
 			//build query
-
-			//$sql = "SELECT * FROM {$list['table']} ORDER BY {$list['primary_id']} DESC";
 			$sql = "SELECT ";
 			$join = "";
 
+			//Build selected params and joins
 			foreach ($this->entity['list']['columns'] as $key => $value) {
 				//if(Auth::hasRole("{$this->entity['name']}.view.{$key}")) {
 				if(!empty($value['from']) && !empty($value['field'])) {
-					$sql .= $value['from'].$key.".`".$value['field']."` as `$key`, ";
+					$sql .= "`".$value['from'].$key."`.`".$value['field']."` as `$key`, ";
 					$jid = !empty($value['pid']) ? $value['pid'] : "id";
-					$join .= "LEFT JOIN {$value['from']} {$value['from']}{$key} ON {$value['from']}{$key}.`$jid` = {$this->entity['list']['table']}.`$key` ";
+					$join .= "LEFT JOIN `{$value['from']}` {$value['from']}{$key} ON `{$value['from']}{$key}`.`$jid` = `{$this->entity['list']['table']}`.`$key` ";
 				} else {
-					$sql .= $this->entity['list']['table'].".`".$key."`, ";
+					$sql .= "`".$this->entity['list']['table']."`.`".$key."`, ";
 				}
 				//}
 			}
 			//Check if is_active button is in config, and add this field for status
 			if(!empty($this->entity['list']['actions']) && (in_array("is_active", $this->entity['list']['actions']) || in_array("one_active", $this->entity['list']['actions']))) {
-				$sql .= $this->entity['list']['table'].".is_active, ";
+				$sql .= "`".$this->entity['list']['table']."`.is_active, ";
 			}
 
 			//If table primary id is not selected, add it manually
 			if(empty($this->entity['list']['columns']['id'])) {
-				$sql .= "{$this->entity['list']['table']}.`{$this->entity['list']['primary_id']}`, ";
+				$sql .= "`{$this->entity['list']['table']}`.`{$this->entity['list']['primary_id']}`, ";
 			}
 
 			$sql = substr($sql, 0, -2);
 
+			//Build order by
 			$orderBy = '';
 			if (!empty($this->entity['list']['order_by'])) {
 				if(is_array($this->entity['list']['order_by'])) {
@@ -227,9 +227,7 @@ class Odmin extends Controller
 			if (!empty($this->entity['list']['orderable'])) {
 				$orderBy = HTTP::get('by') ? HTTP::get('by') . (HTTP::get('order') ? ' '.HTTP::get('order') : '') : $orderBy;
 			}
-
-			$sql .= " FROM {$this->entity['list']['table']} $join WHERE 1 ORDER BY {$this->entity['list']['table']}.".$orderBy;
-			//$sql .= " FROM {$this->entity['list']['table']} $join WHERE 1 ORDER BY {$this->entity['list']['table']}.".(!empty($this->entity['list']['order_by']) ? $this->entity['list']['order_by'] : $this->entity['list']['primary_id']." DESC");
+			$sql .= " FROM `{$this->entity['list']['table']}` $join WHERE 1 ORDER BY `{$this->entity['list']['table']}`.".$orderBy;
 		}
 
 		if (!empty($this->entity['list']['filter'])) {
