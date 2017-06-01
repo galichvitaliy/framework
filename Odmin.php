@@ -368,9 +368,7 @@ class Odmin extends Controller
 					} elseif ($field['source'] == "model") {
 						if(strpos($field['method'], "@") !== false) {
 							list($class, $method) = explode("@", $field['method']);
-							$class = ucfirst($class);
-							$fn = [new $class, $method];
-							$fields[$key]['vals'] = $fn();
+							$fields[$key]['vals'] = call_user_func([ucfirst($class), $method]);
 						} else {
 							$fields[$key]['vals'] = $this->model->{$field['method']}();
 						}
@@ -505,7 +503,7 @@ class Odmin extends Controller
 
 			if(!empty($ent['sizes'])) {
 				$resize = new \Mirage\Image($tmp_path.$_FILES['img']['name'], !empty($ent['ext']) ? $ent['ext'] : "jpg");
-				$resize->outputQuality = 90;
+				//$resize->outputQuality = 90;
 
 				$original_width = !empty($resize->size[0]) ? $resize->size[0] : 0;
 				$original_height = !empty($resize->size[1]) ? $resize->size[1] : 0;
@@ -517,6 +515,7 @@ class Odmin extends Controller
 					$height = !empty($size['height']) ? ($size['height'] < $original_height ? $size['height'] : $original_height) : false;
 					$prefix = !empty($size['prefix']) ? $size['prefix']."_" : '';
 					$wm = (!empty($size['watermark']) && $size['watermark']) ? $size['watermark'] : false;
+					$resize->outputQuality = (!empty($size['quality']) && $size['quality']) ? $size['quality'] : 90;
 
 					if($wm) {
 						$resize->waterMark($tmp_path.$_FILES['img']['name'], App::get('public_dir').$wm);
@@ -594,6 +593,20 @@ class Odmin extends Controller
 		}
 
 		echo json_encode(true);
+	}
+
+	function get_enum_values( $table, $field )
+	{
+		$enum = null;
+		$fields  = DB::inspect($table);
+		$type = $fields[$field];
+		preg_match('/^enum\((.*)\)$/', $type, $matches);
+		foreach( explode(',', $matches[1]) as $value )
+		{
+			$value = trim( $value, "'" );
+			$enum[$value] = $value;
+		}
+		return $enum;
 	}
 
 }
