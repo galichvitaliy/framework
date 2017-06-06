@@ -16,6 +16,7 @@ class Session extends \SessionHandler
 	{
 		$this->name = $name;
 		$this->cookie = $cookie;
+		#$this->started = false;
 
 		$this->cookie += [
 			'lifetime' => 0,
@@ -30,7 +31,6 @@ class Session extends \SessionHandler
 		if (ini_get('session.auto_start')) {
 			$this->start();
 		}
-
 	}
 
 	protected function setup()
@@ -46,16 +46,22 @@ class Session extends \SessionHandler
 			$this->cookie['httponly']
 		);
 
-		$this->isFingerprint();
-		$this->isExpired();
+		#$this->isFingerprint();
+		#$this->isExpired();
 	}
 
-	public function start()
+	public function start($force_create = false)
 	{
-		if (session_id() === '') {
-			if (session_start()) {
-				$this->started = true;
-				return mt_rand(0, 4) === 0 ? $this->regenerate() : true; // 1/5
+
+		if(isset($_COOKIE[$this->name]) || $force_create ) {
+			if (session_id() === '') {
+				if (session_start()) {
+					$this->started = true;
+					//var_dump(session_id());
+					#\Helper::LogIt('session_jobs', session_id()."\t".session_status()."\t".$_SERVER['HTTP_USER_AGENT']."\t".$_SERVER['REMOTE_ADDR']);
+					return true;
+					//return mt_rand(0, 4) === 0 ? $this->regenerate(true) : true; // 1/5
+				}
 			}
 		}
 		return false;
@@ -66,7 +72,7 @@ class Session extends \SessionHandler
 	{
 		$this->started || $this->start();
 		if ( !is_string($key) ) {
-			throw new Exception('Session key must be string value');
+			throw new \Exception('Session key must be string value');
 		}
 
 		return isset($_SESSION[$key]) ? $_SESSION[$key] : $default;
@@ -89,27 +95,31 @@ class Session extends \SessionHandler
 	{
 		$this->started || $this->start();
 		if ( !is_string($key) ) {
-			throw new Exception('Session key must be string value');
+			throw new \Exception('Session key must be string value');
 		}
 		return isset($_SESSION[$key]);
 	}
 
 	public function set($key, $value = NULL)
 	{
-		$this->started || $this->start();
+		$this->started || $this->start(true);
 		if ( !is_string($key) ) {
-			throw new Exception('Session key must be string value');
+			throw new \Exception('Session key must be string value');
 		}
 		$_SESSION[$key] = $value;
 	}
 
 	public function forget($key)
 	{
-		unset($_SESSION[$key]);
+		$this->started || $this->start();
+		if(isset($_SESSION[$key])) {
+			unset($_SESSION[$key]);
+		}
 	}
 
 	public function flush()
 	{
+		$this->started || $this->start();
 		$_SESSION = array();
 		if (ini_get("session.use_cookies")) {
 			$params = session_get_cookie_params();
@@ -118,8 +128,6 @@ class Session extends \SessionHandler
 				$params["secure"], $params["httponly"]
 			);
 		}
-		session_destroy();
-
 	}
 
 	public function regenerate($delete_old_session = false)
@@ -129,6 +137,7 @@ class Session extends \SessionHandler
 
 	public function flash($key)
 	{
+		$this->started || $this->start(true);
 		if(isset($_SESSION['_flashBag'][$key])) {
 			$value = $_SESSION['_flashBag'][$key];
 			unset($_SESSION['_flashBag'][$key]);
@@ -139,12 +148,14 @@ class Session extends \SessionHandler
 
 	public function setFlash($key, $value)
 	{
-		$this->started || $this->start();
+		$this->started || $this->start(true);
 		$_SESSION['_flashBag'][$key] = $value;
 	}
 
 	public function isExpired($ttl = 30)
 	{
+		$this->started || $this->start();
+
 		$activity = isset($_SESSION['_last_activity'])
 			? $_SESSION['_last_activity']
 			: false;
@@ -152,14 +163,13 @@ class Session extends \SessionHandler
 		if ($activity !== false && time() - $activity > $ttl * 60) {
 			return true;
 		}
-
-		$_SESSION['_last_activity'] = time();
-
+		$this->set('_last_activity', time());
 		return false;
 	}
 
 	public function isFingerprint()
 	{
+		$this->started || $this->start();
 		$hash = md5(
 			(isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '') .
 			(ip2long(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '') & ip2long('255.255.0.0'))
@@ -168,9 +178,7 @@ class Session extends \SessionHandler
 		if (isset($_SESSION['_fingerprint'])) {
 			return $_SESSION['_fingerprint'] === $hash;
 		}
-
-		$_SESSION['_fingerprint'] = $hash;
-
+		$this->set('_fingerprint', $hash);
 		return true;
 	}
 
