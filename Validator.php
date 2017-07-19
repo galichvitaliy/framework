@@ -125,7 +125,7 @@ class Validator {
 		$method = 'validate_'.$rule;
 
 		if(method_exists(__CLASS__, $method) || isset($this->validation_methods[$rule])) {
-			throw new Exception("Validator rule '$rule' already exists.");
+			throw new \Exception("Validator rule '$rule' already exists.");
 		}
 
 		$this->validation_methods[$rule] = $callback;
@@ -146,7 +146,7 @@ class Validator {
 		$method = 'filter_'.$rule;
 
 		if(method_exists(__CLASS__, $method) || isset($this->filter_methods[$rule])) {
-			throw new Exception("Filter rule '$rule' already exists.");
+			throw new \Exception("Filter rule '$rule' already exists.");
 		}
 
 		$this->filter_methods[$rule] = $callback;
@@ -338,7 +338,7 @@ class Validator {
 							}
 						}
 					} else {
-						throw new Exception("Validator method '$method' does not exist.");
+						throw new \Exception("Validator method '$method' does not exist.");
 					}
 				}
 			}
@@ -639,7 +639,7 @@ class Validator {
 				} elseif (isset($this->filter_methods[$filter])) {
 					$input[$field] = call_user_func($this->filter_methods[$filter], $input[$field], $params);
 				} else {
-					throw new Exception("Filter method '$filter' does not exist.");
+					throw new \Exception("Filter method '$filter' does not exist.");
 				}
 			}
 		}

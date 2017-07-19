@@ -19,6 +19,7 @@ class Odmin extends Controller
 		HTTP::$default_controller = 'odmin';
 
 		$this->setRouting();
+		App::remove('layout');
 		App::set('layout', $this->controller);
 		parent::__construct();
 
