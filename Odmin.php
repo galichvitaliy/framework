@@ -318,7 +318,7 @@ class Odmin extends Controller
 			$data = $this->model->{$this->entity[$act]['load']}($id);
 			$data['id'] = $id;
 			if(!$id && !empty($this->entity['hash'])) {
-				$hash = Helper::uniqHash($this->entity['table']);
+				$hash = $this->entity['hash'] !== true ? $this->model->{$this->entity['hash']}($this->entity['table']) : Helper::uniqHash($this->entity['table']);
 				$data['hash'] = $hash;
 			}
 			$this->tpl->assign('item', $data);
@@ -369,9 +369,9 @@ class Odmin extends Controller
 					} elseif ($field['source'] == "model") {
 						if(strpos($field['method'], "@") !== false) {
 							list($class, $method) = explode("@", $field['method']);
-							$fields[$key]['vals'] = call_user_func([ucfirst($class), $method]);
+							$fields[$key]['vals'] = call_user_func([ucfirst($class), $method], $id);
 						} else {
-							$fields[$key]['vals'] = $this->model->{$field['method']}();
+							$fields[$key]['vals'] = $this->model->{$field['method']}($id);
 						}
 					} elseif($field['source'] == "enum") {
 						$fields[$key]['vals']  = $this->get_enum_values($this->entity['table'], $key);
