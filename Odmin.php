@@ -305,12 +305,26 @@ class Odmin extends Controller
 		//$source_array = array("select", "select_dual", "radio");
 
 		//abrakadabra, this part is for look for add/edit array from other section
-		$fields = (!empty($this->entity[$act]['fields']) && is_array($this->entity[$act]['fields']))
+		/*$fields = (!empty($this->entity[$act]['fields']) && is_array($this->entity[$act]['fields']))
 			? $this->entity[$act]['fields']
 			: ( !empty($this->entity[$act]['fields']) && is_array($this->entity[$this->entity[$act]['fields']]['fields'])
 				? $this->entity[$this->entity[$act]['fields']]['fields']
 				: false
-			);
+			);*/
+
+		$fields = false;
+		if (!empty($this->entity[$act]['fields'])) {
+			if (is_array($this->entity[$act]['fields'])) {
+				$fields = $this->entity[$act]['fields'];
+			} else {
+				if (is_array($this->entity[$this->entity[$act]['fields']]['fields'])) {
+					$fields = $this->entity[$this->entity[$act]['fields']]['fields'];
+					if (!empty($this->entity[$act]['extend_fields']) && is_array($this->entity[$act]['extend_fields'])) {
+						$fields = array_replace($fields, $this->entity[$act]['extend_fields']);
+					}
+				}
+			}
+		}
 		$db_fields = $this->prepareFields($fields);
 
 		//Custom data loader
@@ -369,7 +383,7 @@ class Odmin extends Controller
 					} elseif ($field['source'] == "model") {
 						if(strpos($field['method'], "@") !== false) {
 							list($class, $method) = explode("@", $field['method']);
-							$fields[$key]['vals'] = call_user_func([ucfirst($class), $method], $id);
+							$fields[$key]['vals'] = call_user_func([new $class, $method], $id);
 						} else {
 							$fields[$key]['vals'] = $this->model->{$field['method']}($id);
 						}
