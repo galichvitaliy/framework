@@ -10,7 +10,7 @@ class Session extends \SessionHandler
 {
 
 	protected $key, $name, $cookie;
-	private $started;
+	private $started = false;
 
 	public function __construct($name = 'MY_SESSION', $cookie = [])
 	{
@@ -45,16 +45,19 @@ class Session extends \SessionHandler
 			$this->cookie['httponly']
 		);
 
-		$this->isFingerprint();
+		#$this->isFingerprint();
 		#$this->isExpired();
 	}
 
-	public function start()
+	public function start($force_create = false)
 	{
-		if (session_id() === '') {
-			if (session_start()) {
-				$this->started = true;
-				return mt_rand(0, 4) === 0 ? $this->regenerate() : true; // 1/5
+		if (isset($_COOKIE[session_name()]) || $force_create) {
+			if (session_id() === '') {
+				if (session_start()) {
+					$this->started = true;
+					return true;
+					//return mt_rand(0, 4) === 0 ? $this->regenerate(true) : true; // 1/5
+				}
 			}
 		}
 		return false;
@@ -95,7 +98,7 @@ class Session extends \SessionHandler
 
 	public function set($key, $value = NULL)
 	{
-		$this->started || $this->start();
+		$this->started || $this->start(true);
 		if ( !is_string($key) ) {
 			throw new \Exception('Session key must be string value');
 		}
@@ -130,6 +133,7 @@ class Session extends \SessionHandler
 
 	public function flash($key)
 	{
+		$this->started || $this->start();
 		if(isset($_SESSION['_flashBag'][$key])) {
 			$value = $_SESSION['_flashBag'][$key];
 			unset($_SESSION['_flashBag'][$key]);
@@ -140,12 +144,13 @@ class Session extends \SessionHandler
 
 	public function setFlash($key, $value)
 	{
-		$this->started || $this->start();
+		$this->started || $this->start(true);
 		$_SESSION['_flashBag'][$key] = $value;
 	}
 
 	public function isExpired($ttl = 30)
 	{
+		$this->started || $this->start();
 		$activity = isset($_SESSION['_last_activity'])
 			? $_SESSION['_last_activity']
 			: false;
@@ -161,6 +166,7 @@ class Session extends \SessionHandler
 
 	public function isFingerprint()
 	{
+		$this->started || $this->start();
 		$hash = md5(
 			(isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '') .
 			(ip2long(isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '') & ip2long('255.255.0.0'))
