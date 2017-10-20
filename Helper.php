@@ -97,7 +97,7 @@ class Helper {
 			$sql_num .= " LIMIT 0, $max_limit";
 		}
 
-		$sql	= str_replace(";","",$sql);
+		//$sql	= str_replace(";","",$sql);
 		$sql	= preg_replace('/LIMIT(.*?)$/Uis', "", $sql);
 		$sql	.= " LIMIT $layout, $klvo;";
 
