@@ -23,6 +23,15 @@ class RedisStore implements StoreInterface {
 		$this->prefix = strlen($prefix) > 0 ? $prefix.':' : '';
 	}
 
+	public function keys($pattern)
+	{
+		$keys = $this->connection()->keys($this->prefix.$pattern);
+		if ( ! empty($keys)) {
+
+			return $keys;
+		}
+	}
+
 	public function get($key)
 	{
 		if ( ! is_null($value = $this->connection()->get($this->prefix.$key))) {
@@ -49,7 +58,7 @@ class RedisStore implements StoreInterface {
 
 	public function forget($key)
 	{
-		$this->connection()->del($this->prefix.$key);
+		$this->connection()->del($this->keys($key));
 	}
 
 	public function flush()
