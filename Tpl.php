@@ -27,9 +27,6 @@ class Tpl {
 		if( Config::get('web.dev') ) {
 			$smarty->force_compile = true;
 			$smarty->assign("dev", true);
-			if( Config::get('web.debug') ) {
-				$smarty->loadFilter("output", "debugbar");
-			}
 		} else {
 			$smarty->compile_check = false;
 		}

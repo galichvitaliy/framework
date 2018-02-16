@@ -343,7 +343,7 @@ class Odmin extends Controller
 					$data[$key] = htmlspecialchars($value);
 				}
 				if(!empty($this->entity['add']['fields'][$key]['multi']) && empty($this->entity['add']['fields'][$key]['handler'])) {
-					$data[$key] = unserialize($value);
+					$data[$key] = !empty($value) ? unserialize($value) : [];
 				}
 			}
 			$data['id'] = $id;
