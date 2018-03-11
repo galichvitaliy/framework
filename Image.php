@@ -16,6 +16,8 @@ class Image {
 	var $size;
 	var $format;
 	var $outputQuality = 90;
+	var $fillColor = 'ffffff';
+	var $transparent = false;
 	var $createFuncName;
 	var $outputFuncName;
 
@@ -59,7 +61,8 @@ class Image {
 	 * @param $rgb Шестнадцатиричный индекс цвета фона заливки
 	 * @return unknown_type
 	 */
-	function fillResize($dest, $width, $height, $rgb=0xFFFFFF){
+	function fillResize($dest, $width, $height)
+	{
 		if ($this->error!='') exit($this->error);
 		$x_ratio = $width / $this->size[0]; // масштаб по х = необходимая ширина / реальный размер по х
 		$y_ratio = $height / $this->size[1]; // масштаб по у = необходимая высота / реальный размер по у
@@ -76,9 +79,9 @@ class Image {
 		$f = $this->createFuncName;
 		$isrc = $f($this->file);
 		$idest = imagecreatetruecolor($width, $height);
-		//imageAlphaBlending($idest, false);
 
-		imagefill($idest, 0, 0, $rgb);
+
+		$this->transparent ? imageAlphaBlending($idest, false) : imagefill($idest, 0, 0, hexdec($this->fillColor));
 		imagecopyresampled($idest, $isrc, $new_left, $new_top, 0, 0,$new_width, $new_height, $this->size[0], $this->size[1]);
 
 		if ($this->format == 'jpeg'){
@@ -119,7 +122,7 @@ class Image {
 		$isrc = $f($this->file);
 		$idest = imagecreatetruecolor($new_width, $new_height);
 
-		imageAlphaBlending($idest, false);
+		$this->transparent ? imageAlphaBlending($idest, false) : imagefill($idest, 0, 0, hexdec($this->fillColor));
 		imagecopyresampled($idest, $isrc, 0, 0, 0, 0,$new_width, $new_height, $this->size[0], $this->size[1]);
 		imageSaveAlpha($idest, true);
 
@@ -170,7 +173,7 @@ class Image {
 
 		$idest = imagecreatetruecolor($width, $height);
 
-		imageAlphaBlending($idest, false);
+		$this->transparent ? imageAlphaBlending($idest, false) : imagefill($idest, 0, 0, hexdec($this->fillColor));
 		imagecopyresampled($idest, $isrc, 0, 0, $left, $top, $width, $height, $new_width, $new_height);
 		imageSaveAlpha($idest, true);
 
@@ -208,7 +211,7 @@ class Image {
 		$isrc = $f($this->file);
 		$idest = imagecreatetruecolor($new_width, $new_height);
 
-		imageAlphaBlending($idest, false);
+		$this->transparent ? imageAlphaBlending($idest, false) : imagefill($idest, 0, 0, hexdec($this->fillColor));
 		imagecopyresampled($idest, $isrc, 0, 0, 0, 0,$new_width, $new_height, $this->size[0], $this->size[1]);
 		imageSaveAlpha($idest, true);
 
@@ -246,7 +249,7 @@ class Image {
 		$isrc = $f($this->file);
 		$idest = imagecreatetruecolor($new_width, $new_height);
 
-		imageAlphaBlending($idest, false);
+		$this->transparent ? imageAlphaBlending($idest, false) : imagefill($idest, 0, 0, hexdec($this->fillColor));
 		imagecopyresampled($idest, $isrc, 0, 0, 0, 0,$new_width, $new_height, $this->size[0], $this->size[1]);
 		imageSaveAlpha($idest, true);
 
@@ -301,10 +304,7 @@ class Image {
 				break;
 		}
 
-		//header("Content-Type: ".$info_o['mime']);
-
 		$f = $this->createFuncName;
-		$isrc = $f($this->file);
 		$idest = imagecreatetruecolor($info_o[0], $info_o[1]);
 
 		$iWatermark = @imageCreateFromString(file_get_contents($watermark));
