@@ -1,4 +1,4 @@
-#Mirage Framework
+# Mirage Framework
 
 - [App](/manual/App.md)
 - [Auth](/manual/Auth.md)
