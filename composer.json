@@ -11,8 +11,8 @@
 	"minimum-stability": "dev",
 	"require": {
 		"php": ">=5.6",
-		"pimple/pimple": "5.1",
-		"gabordemooij/redbean": "4.3.*",
+		"pimple/pimple": "3.2.*",
+		"gabordemooij/redbean": "5.*",
 		"smarty/smarty": "3.1.*"
 	},
 	"autoload": {
