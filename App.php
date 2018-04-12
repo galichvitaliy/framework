@@ -16,6 +16,11 @@ class App {
 		static::$container = $container;
 	}
 
+	static function factory($id, $value)
+	{
+		static::$container[$id] = static::$container->factory($value);
+	}
+
 	static function set($id, $value)
 	{
 		static::$container[$id] = $value;
@@ -32,4 +37,5 @@ class App {
 			unset(static::$container[$id]);
 		}
 	}
+
 }
