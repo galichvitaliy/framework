@@ -539,7 +539,7 @@ class Odmin extends Controller
 					if($crop) {
 						$resize->centerResize($path.$prefix.$filename, $width, $height);
 					} elseif($fill) {
-						$resize->fillResize($path.$prefix.$filename, $width, $height);
+						$resize->fillResize($path.$prefix.$filename, (!empty($size['width']) ? $size['width'] : $original_width), (!empty($size['height']) ? $size['height'] : $original_height));
 					} else {
 						if($width && !$height){
 							$resize->widthRestriction($path.$prefix.$filename, $width);
