@@ -231,19 +231,26 @@ class Odmin extends Controller
 			$sql .= " FROM `{$this->entity['list']['table']}` $join WHERE 1 ORDER BY `{$this->entity['list']['table']}`.".$orderBy;
 		}
 
-		if (!empty($this->entity['list']['filter'])) {
-			$sql = $this->model->{$this->entity['list']['filter']}($sql);
+        if (!empty($this->entity['list']['filter'])) {
+            $sql = $this->model->{$this->entity['list']['filter']}($sql);
 
-			//load filter vars, if available and pass it to template
-			if(method_exists($this->model, 'cmsFilterData')) {
-				$filer_arr = $this->model->cmsFilterData();
-				if(is_array($filer_arr)) {
-					foreach ($filer_arr as $f_key => $f_val) {
-						$this->tpl->assign($f_key, $f_val);
-					}
-				}
-			}
-		}
+            //load filter vars, if available and pass it to template
+            if (!empty($this->entity['list']['filterData']) && method_exists($this->model, $this->entity['list']['filterData'])) {
+                $filer_arr = $this->model->{$this->entity['list']['filterData']}();
+                if(is_array($filer_arr)) {
+                    foreach ($filer_arr as $f_key => $f_val) {
+                        $this->tpl->assign($f_key, $f_val);
+                    }
+                }
+            } elseif (method_exists($this->model, 'cmsFilterData')) {
+                $filer_arr = $this->model->cmsFilterData();
+                if(is_array($filer_arr)) {
+                    foreach ($filer_arr as $f_key => $f_val) {
+                        $this->tpl->assign($f_key, $f_val);
+                    }
+                }
+            }
+        }
 
 		if (!empty($this->entity['list']['pagination'])) {
 			$max_limit = !empty($this->entity['list']['max_limit']) ? $this->entity['list']['max_limit'] : false;
