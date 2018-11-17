@@ -539,10 +539,6 @@ class Odmin extends Controller
 					$wm = (!empty($size['watermark']) && $size['watermark']) ? $size['watermark'] : false;
 					$resize->outputQuality = (!empty($size['quality']) && $size['quality']) ? $size['quality'] : 90;
 
-					if($wm) {
-						$resize->waterMark($tmp_path.$_FILES['img']['name'], App::get('public_dir').$wm);
-					}
-
 					if($crop) {
 						$resize->centerResize($path.$prefix.$filename, $width, $height);
 					} elseif($fill) {
@@ -556,6 +552,11 @@ class Odmin extends Controller
 							$resize->limitBoxResize($path.$prefix.$filename, $width, $height);
 						}
 					}
+
+					if ($wm) {
+						$resize->waterMark($path . $prefix . $filename, App::get('public_dir') . $wm);
+					}
+
 				}
 			} else {
 				copy($tmp_path.$_FILES['img']['name'], $path.$filename);
