@@ -192,7 +192,9 @@ class Session extends \SessionHandler
 
 	public function timestamp()
 	{
-		return $this->set('_lli', time());
+		$_SESSION['_lli'] = time();
+
+		return true;
 	}
 
 
