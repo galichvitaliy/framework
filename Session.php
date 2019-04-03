@@ -45,6 +45,7 @@ class Session extends \SessionHandler
 			$this->cookie['httponly']
 		);
 
+		$this->timestamp();
 		#$this->isFingerprint();
 		#$this->isExpired();
 	}
@@ -78,6 +79,7 @@ class Session extends \SessionHandler
 	{
 		$value = $this->get($key, $default);
 		$this->forget($key);
+		$this->timestamp();
 		return $value;
 	}
 
@@ -103,12 +105,14 @@ class Session extends \SessionHandler
 			throw new \Exception('Session key must be string value');
 		}
 		$_SESSION[$key] = $value;
+		$this->timestamp();
 	}
 
 	public function forget($key)
 	{
 		if(isset($_SESSION[$key])) {
 			unset($_SESSION[$key]);
+			$this->timestamp();
 		}
 	}
 
@@ -185,5 +189,11 @@ class Session extends \SessionHandler
 	{
 		return ! $this->isExpired($ttl) && $this->isFingerprint();
 	}
+
+	public function timestamp()
+	{
+		return $this->set('_lli', time());
+	}
+
 
 }
