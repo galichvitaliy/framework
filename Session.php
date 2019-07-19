@@ -9,7 +9,7 @@
 class Session extends \SessionHandler
 {
 
-	protected $key, $name, $cookie;
+	protected $name, $cookie;
 	private $started = false;
 
 	public function __construct($name = 'MY_SESSION', $cookie = [])
@@ -45,7 +45,6 @@ class Session extends \SessionHandler
 			$this->cookie['httponly']
 		);
 
-		$this->timestamp();
 		#$this->isFingerprint();
 		#$this->isExpired();
 	}
@@ -56,6 +55,7 @@ class Session extends \SessionHandler
 			if (session_id() === '') {
 				if (session_start()) {
 					$this->started = true;
+					$this->timestamp();
 					return true;
 					//return mt_rand(0, 4) === 0 ? $this->regenerate(true) : true; // 1/5
 				}
@@ -64,7 +64,6 @@ class Session extends \SessionHandler
 		return false;
 	}
 
-	//session()->get('key', 'default');
 	public function get($key, $default = false)
 	{
 		$this->started || $this->start();
