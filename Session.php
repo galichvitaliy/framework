@@ -45,6 +45,7 @@ class Session extends \SessionHandler
 			$this->cookie['httponly']
 		);
 
+		$this->timestamp();
 		#$this->isFingerprint();
 		#$this->isExpired();
 	}
@@ -191,9 +192,7 @@ class Session extends \SessionHandler
 
 	public function timestamp()
 	{
-		$_SESSION['_lli'] = time();
-
-		return true;
+		return $this->started ? $_SESSION['_lli'] = time() : false;
 	}
 
 
