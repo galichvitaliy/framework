@@ -62,6 +62,7 @@ class Odmin extends Controller
 					if (!empty($this->entity['edit']['method'])) {
 						$return_id = $this->model->{$this->entity['edit']['method']}($_POST);
 						if($return_id) {
+							Cache::forget($this->entity['name'].':*');
 							echo json_encode(array('id' => $return_id));
 						} else {
 							echo json_encode(array('error' => "Error ocured"));
@@ -73,28 +74,27 @@ class Odmin extends Controller
 					$this->simpleForm();
 				}
 			} elseif($this->cms_action == "edit") {
-				$this->simpleForm($this->getVal("edit"));
-			} elseif($this->cms_action == "clone" && $this->getVal("clone")) {
-				$this->simpleClone($this->entity, $this->getVal("clone"));
-			} elseif($this->cms_action == "delete" && $this->getVal("delete")) {
+				$this->simpleForm(HTTP::val("edit"));
+			} elseif($this->cms_action == "clone" && HTTP::val("clone")) {
+				$this->simpleClone($this->entity, HTTP::val("clone"));
+			} elseif($this->cms_action == "delete" && HTTP::val("delete")) {
 
 				if (!empty($this->entity['remove']['method'])) {
-					$return_st = $this->model->{$this->entity['remove']['method']}($this->getVal("delete") == "mass" ? $this->getVal("item") : $this->getVal("delete"));
-
+					$return_st = $this->model->{$this->entity['remove']['method']}(HTTP::val("delete") == "mass" ? HTTP::val("item") : HTTP::val("delete"));
 					if($return_st) {
+						Cache::forget($this->entity['name'].':*');
 						echo json_encode($return_st);
 					} else {
 						echo json_encode("Error ocured");
 					}
 				} else {
-					$this->simpleDelete($this->entity, $this->getVal("delete") == "mass" ? $this->getVal("item") : $this->getVal("delete"));
+					$this->simpleDelete($this->entity, HTTP::val("delete") == "mass" ? HTTP::val("item") : HTTP::val("delete"));
 				}
 			} elseif ($this->cms_action == "ext") {
-				$method = $this->getVal("ext");
-				$this->model->$method($this->entity, $this->getVal("id"));
-
-			} elseif ( $this->cms_action == "act" && method_exists($this, $this->getVal("act")) ) {
-				$this->{$this->getVal("act")}();
+				$method = HTTP::val("ext");
+				$this->model->$method($this->entity, HTTP::val("id"));
+			} elseif ( $this->cms_action == "act" && method_exists($this, HTTP::val("act")) ) {
+				$this->{HTTP::val("act")}();
 			} else {
 				if(empty($this->entity['list']) && !empty($this->entity['add'])) {
 					$this->simpleForm();
@@ -128,42 +128,6 @@ class Odmin extends Controller
 			}
 		}
 		$this->link = $link;
-	}
-
-	//TODO: should be replaced with HTTP methods
-	function getVal($name, $default = false)
-	{
-		if (isset($_POST[$name]) && $_POST[$name]) {
-			return $_POST[$name];
-		} elseif (isset($_GET[$name]) && $_GET[$name]) {
-			return $_GET[$name];
-		} elseif (isset($_SESSION[$name]) && $_SESSION[$name]) {
-			return $_SESSION[$name];
-		} elseif (isset($this->link[$name]) && $this->link[$name]) {
-			return $this->link[$name];
-		} else {
-			return $default;
-		}
-	}
-
-	//TODO: should be replaced with HTTP methods
-	function getAllValsDecoded()
-	{
-		if ($_POST) {
-			$vals = $_POST;
-		} elseif ($_GET) {
-			$vals = $_GET;
-		} elseif (isset($this->link)) {
-			$vals = $this->link;
-		} else {
-			$vals = false;
-		}
-		if ($vals) {
-			foreach ($vals as $key => $value) {
-				$vals[$key] = urldecode($value);
-			}
-		}
-		return $vals;
 	}
 
 	function simpleList()
@@ -436,6 +400,7 @@ class Odmin extends Controller
 			}
 			if(DB::exec("DELETE FROM {$entity['table']} WHERE {$entity['primary_id']} IN ('$ids')")) {
 				$st = true;
+				Cache::forget($entity['name'].':*');
 			}
 		}
 		echo json_encode($st);
@@ -444,14 +409,14 @@ class Odmin extends Controller
 	function simpleClone($entity, $id = false)
 	{
 		$st = false;
-		if($id) {
-			$id = ($id);
-			$ids = urldecode((int)$id);
-			$bean = DB::load( $entity['table'], $ids );
+		if ($id) {
+			$bean = DB::load( $entity['table'], $id );
 			$duplicated = DB::duplicate( $bean );
-			if($new_id = DB::store( $duplicated )) {
-				$st = $new_id;
+			$duplicated->update_date = DB::isoDateTime();
+			if ($entity['hash']) {
+				$duplicated->hash = Helper::uniqHash($entity['table']);
 			}
+			$st = DB::store( $duplicated );
 		}
 		echo json_encode($st);
 	}
