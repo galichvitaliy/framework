@@ -78,7 +78,6 @@ class Odmin extends Controller
 			} elseif($this->cms_action == "clone" && HTTP::val("clone")) {
 				$this->simpleClone($this->entity, HTTP::val("clone"));
 			} elseif($this->cms_action == "delete" && HTTP::val("delete")) {
-
 				if (!empty($this->entity['remove']['method'])) {
 					$return_st = $this->model->{$this->entity['remove']['method']}(HTTP::val("delete") == "mass" ? HTTP::val("item") : HTTP::val("delete"));
 					if($return_st) {
@@ -95,6 +94,9 @@ class Odmin extends Controller
 				$this->model->$method($this->entity, HTTP::val("id"));
 			} elseif ( $this->cms_action == "act" && method_exists($this, HTTP::val("act")) ) {
 				$this->{HTTP::val("act")}();
+			} elseif(method_exists($this, $this->cms_action)) {
+				// if method like @is_active@ sends to url /cms/entity_name/is_active then we have $this->entity in method
+				$this->{$this->cms_action}();
 			} else {
 				if(empty($this->entity['list']) && !empty($this->entity['add'])) {
 					$this->simpleForm();
@@ -103,6 +105,8 @@ class Odmin extends Controller
 				}
 			}
 		} elseif( method_exists($this, $this->action) ) {
+			// if method like @is_active@ sends to url /cms/is_active then we haven't $this->entity in method and can't security check and clear cache by name
+			// left for backward compatibility
 			$this->{$this->action}();
 		} else {
 			$this->index();
