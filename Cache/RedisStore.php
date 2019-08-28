@@ -25,10 +25,10 @@ class RedisStore implements StoreInterface {
 
 	public function keys($pattern)
 	{
-		// check if prefix includes lang glue symbol "@", and get keys of all languages
-		if (strpos($this->prefix, "@") !== false) {
-			list($prefix) = explode("@", $this->prefix);
-			$keys = $this->connection()->keys($prefix."@??:".$pattern);
+		// check if prefix includes lang glue symbol "_", and get keys of all languages
+		if (strpos($this->prefix, "_") !== false) {
+			list($prefix) = explode("_", $this->prefix);
+			$keys = $this->connection()->keys($prefix."_??:".$pattern);
 		} else {
 			$keys = $this->connection()->keys($this->prefix.$pattern);
 		}
