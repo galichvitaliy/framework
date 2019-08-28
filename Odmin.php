@@ -62,7 +62,7 @@ class Odmin extends Controller
 					if (!empty($this->entity['edit']['method'])) {
 						$return_id = $this->model->{$this->entity['edit']['method']}($_POST);
 						if($return_id) {
-							Cache::forget($this->entity['name'].':*');
+							//Cache::forget($this->entity['name'].':*');
 							echo json_encode(array('id' => $return_id));
 						} else {
 							echo json_encode(array('error' => "Error ocured"));
