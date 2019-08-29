@@ -25,13 +25,7 @@ class RedisStore implements StoreInterface {
 
 	public function keys($pattern)
 	{
-		// check if prefix includes lang glue symbol "_", and get keys of all languages
-		if (strpos($this->prefix, "_") !== false) {
-			list($prefix) = explode("_", $this->prefix);
-			$keys = $this->connection()->keys($prefix."_??:".$pattern);
-		} else {
-			$keys = $this->connection()->keys($this->prefix.$pattern);
-		}
+		$keys = $this->connection()->keys($this->prefix.$pattern);
 
 		if ( ! empty($keys)) {
 			return $keys;
