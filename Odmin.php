@@ -62,6 +62,7 @@ class Odmin extends Controller
 					if (!empty($this->entity['edit']['method'])) {
 						$return_id = $this->model->{$this->entity['edit']['method']}($_POST);
 						if($return_id) {
+							Cache::forget($this->entity['name'].':*');
 							echo json_encode(array('id' => $return_id));
 						} else {
 							echo json_encode(array('error' => "Error ocured"));
@@ -80,6 +81,7 @@ class Odmin extends Controller
 				if (!empty($this->entity['remove']['method'])) {
 					$return_st = $this->model->{$this->entity['remove']['method']}(HTTP::val("delete") == "mass" ? HTTP::val("item") : HTTP::val("delete"));
 					if($return_st) {
+						Cache::forget($this->entity['name'].':*');
 						echo json_encode($return_st);
 					} else {
 						echo json_encode("Error ocured");
@@ -402,6 +404,7 @@ class Odmin extends Controller
 			}
 			if(DB::exec("DELETE FROM {$entity['table']} WHERE {$entity['primary_id']} IN ('$ids')")) {
 				$st = true;
+				Cache::forget($entity['name'].':*');
 			}
 		}
 		echo json_encode($st);
@@ -414,7 +417,7 @@ class Odmin extends Controller
 			$bean = DB::load( $entity['table'], $id );
 			$duplicated = DB::duplicate( $bean );
 			$duplicated->update_date = DB::isoDateTime();
-			if ($entity['hash']) {
+			if (!empty($entity['hash'])) {
 				$duplicated->hash = Helper::uniqHash($entity['table']);
 			}
 			$st = DB::store( $duplicated );
