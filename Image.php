@@ -268,7 +268,7 @@ class Image {
 		return true;
 	}
 
-	function waterMark($original, $watermark = 'watermark.png', $placement = 'bottom=10,right=10', $destination = null) {
+	function waterMark($original, $watermark = 'watermark.png', $placement = 'bottom=10,right=10', $padding = 0) {
 		$info_o = @getImageSize($original);
 		if (!$info_o)
 			return false;
@@ -276,16 +276,26 @@ class Image {
 		if (!$info_w)
 			return false;
 
+		$watermark_width = $info_o[0] < $info_w[0] ? $info_o[0] - $padding : $info_w[0] ;// новая ширина вотермарка = если источник меньше чем вотермарк, уменьшаем вотермарк до ширины источника
+		$watermark_height = $info_w[1]*$watermark_width/$info_w[0]; // расчитываем новую высоту с сохранением пропорций
+
+		$iWatermark = @imageCreateFromString(file_get_contents($watermark));
+
+		$watermark_resized = imagecreatetruecolor($watermark_width, $watermark_height);
+		imagealphablending($watermark_resized, false);
+		imagesavealpha($watermark_resized, true);
+		imagecopyresampled($watermark_resized, $iWatermark, 0, 0, 0, 0, $watermark_width, $watermark_height, $info_w[0],$info_w[1]);
+
 		list($vertical, $horizontal) = explode(',', $placement);
 		list($vertical, $sy) = explode('=', trim($vertical));
 		list($horizontal, $sx) = explode('=', trim($horizontal));
 
 		switch (trim($vertical)) {
 			case 'bottom':
-				$y = $info_o[1] - $info_w[1] - (int)$sy;
+				$y = $info_o[1] - $watermark_height - (int)$sy;
 				break;
 			case 'middle':
-				$y = ceil($info_o[1]/2) - ceil($info_w[1]/2) + (int)$sy;
+				$y = ceil($info_o[1]/2) - ceil($watermark_height/2) + (int)$sy;
 				break;
 			default:
 				$y = (int)$sy;
@@ -294,10 +304,10 @@ class Image {
 
 		switch (trim($horizontal)) {
 			case 'right':
-				$x = $info_o[0] - $info_w[0] - (int)$sx;
+				$x = $info_o[0] - $watermark_width - (int)$sx;
 				break;
 			case 'center':
-				$x = ceil($info_o[0]/2) - ceil($info_w[0]/2) + (int)$sx;
+				$x = ceil($info_o[0]/2) - ceil($watermark_width/2) + (int)$sx;
 				break;
 			default:
 				$x = (int)$sx;
@@ -307,14 +317,13 @@ class Image {
 		$f = $this->createFuncName;
 		$idest = imagecreatetruecolor($info_o[0], $info_o[1]);
 
-		$iWatermark = @imageCreateFromString(file_get_contents($watermark));
 		$iOriginal = @imageCreateFromString(file_get_contents($original));
 
 		imageAlphaBlending($idest, true);
 		imageSaveAlpha($idest, true);
 
 		imageCopy($idest, $iOriginal, 0, 0, 0, 0, $info_o[0], $info_o[1]);
-		imageCopy($idest, $iWatermark, $x, $y, 0, 0, $info_w[0], $info_w[1]);
+		imageCopy($idest, $watermark_resized, $x, $y, 0, 0, $watermark_width, $watermark_height);
 
 		if ($this->format == 'jpeg'){
 			$f = $this->outputFuncName;
@@ -328,6 +337,53 @@ class Image {
 		imagedestroy($iOriginal);
 		imagedestroy($idest);
 		imageDestroy($iWatermark);
+
+		return true;
+	}
+
+	function blur($dest, $width, $height) {
+		if ($this->error!='') exit($this->error);
+		$a1_a=$width / $this->size[0];
+		$b1_b = $height / $this->size[1];
+
+		if($a1_a > $b1_b){
+			$new_width = $this->size[0];
+			$new_height = $new_width*$height/$width;
+			$left=0;
+			$top=($this->size[1]-$new_height)/2;
+		}
+		else{
+			$new_height = $this->size[1];
+			$new_width = $new_height*$width/$height;
+			$left=($this->size[0]-$new_width)/2;
+			$top=0;
+		}
+
+		$f = $this->createFuncName;
+		$isrc = $f($this->file);
+
+		$idest = imagecreatetruecolor($width, $height);
+
+		$this->transparent ? imageAlphaBlending($idest, false) : imagefill($idest, 0, 0, hexdec($this->fillColor));
+		imagecopyresampled($idest, $isrc, 0, 0, $left, $top, $width, $height, $new_width, $new_height);
+		imageSaveAlpha($idest, true);
+
+		imagefilter($idest, IMG_FILTER_PIXELATE, 3);
+		imagefilter($idest, IMG_FILTER_GAUSSIAN_BLUR);
+		imagefilter($idest, IMG_FILTER_SMOOTH, 0);
+		imagefilter($idest, IMG_FILTER_GAUSSIAN_BLUR);
+
+		if ($this->format == 'jpeg'){
+			$f = $this->outputFuncName;
+			$f($idest, $dest, $this->outputQuality);
+		}
+		else{
+			$f = $this->outputFuncName;
+			$f($idest, $dest);
+		}
+
+		imagedestroy($isrc);
+		imagedestroy($idest);
 
 		return true;
 	}
