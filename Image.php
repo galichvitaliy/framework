@@ -239,10 +239,10 @@ class Image {
 	 * @param $width
 	 * @return unknown_type
 	 */
-	function widthRestriction($dest,$width){
+	function widthRestriction($dest,$width,$limit_to_original_width = false){
 		if ($this->error!='') exit($this->error);
 
-		$new_width = $width;// новая ширина = ширине установленной юзером
+		$new_width = ($limit_to_original_width && $width > $this->size[0]) ? $this->size[0] : $width;// новая ширина = ширине установленной юзером
 		$new_height = $this->size[1]*$new_width/$this->size[0]; // расчитываем новую высоту с сохранением пропорций
 
 		$f = $this->createFuncName;
