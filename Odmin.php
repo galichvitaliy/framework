@@ -507,6 +507,7 @@ class Odmin extends Controller
 					$prefix = !empty($size['prefix']) ? $size['prefix']."_" : '';
 					$wm = (!empty($size['watermark']) && $size['watermark']) ? $size['watermark'] : false;
 					$resize->outputQuality = (!empty($size['quality']) && $size['quality']) ? $size['quality'] : 90;
+					$resize->transparent = (!empty($size['transparent']) && $size['transparent']) ? true : false;
 
 					if($crop) {
 						$resize->centerResize($path.$prefix.$filename, $width, $height);
